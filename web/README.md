@@ -81,9 +81,14 @@ El servidor se ejecutará en `http://localhost:3005`
 Genera un prompt aleatorio para fotografía de modelos.
 
 **Parámetros de Query:**
-- `style` (opcional): Estilo específico del preset (ej: "cinematic")
-- `lighting` (opcional): Iluminación específica (ej: "natural", "studio")
-- `mode` (opcional): Modo de generación - "cinematic", "spicy", "zero" (default: "cinematic")
+- `style` (opcional): Estilo específico del preset (sin preset default es aleatorio)
+  - Presets disponibles: `cinematic`, `editorial`, `noir`, `minimal`, `luxury`, `glamour`, `natural`, `artistic`, `beauty`, `moody`, `studio`, `commercial`
+- `lighting` (opcional): Iluminación específica que override el dataset aleatorio (ej: "natural", "butterfly", "rembrandt")
+- `mode` (opcional): Modo de generación (default: "cinematic")
+  - `zero`: Intro simple "A professional photo of a woman." + 1 item quality + 1 item finish
+  - `cinematic`: Intro normal + 2 items quality + 2 items finishes (default)
+  - `detailed`: Intro normal + 3 items quality + 2 items finishes
+  - `spicy`: Intro audaz + 1 item quality + 2 items finishes + lighting forzado
 - `format` (opcional): Formato de salida - "json" o "text" (default: "json")
   - `json`: Devuelve objeto con prompt, mode y config
   - `text`: Devuelve solo el texto del prompt en texto plano
@@ -173,27 +178,56 @@ web/
 │   └── utils/
 │       └── random.js          # Funciones de selección aleatoria
 ├── data/
-│   ├── angles.json            # Ángulos de cámara
-│   ├── body-types.json        # Tipos de cuerpo (delgado, musculoso, etc.)
-│   ├── body-shapes.json       # Formas corporales (hourglass, pear-shaped, etc.)
-│   ├── body-proportions.json  # Proporciones (long-legged, petite, etc.)
-│   ├── body-details.json      # Detalles corporales (muscle definition, etc.)
-│   ├── compositions.json      # Composiciones visuales
-│   ├── eyes.json              # Colores y tipos de ojos
-│   ├── finishes.json          # Acabados de imagen
-│   ├── hair.json              # Estilos de cabello
-│   ├── lighting.json          # Tipos de iluminación
-│   ├── locations.json         # Locaciones
-│   ├── poses.json             # Poses
-│   ├── presets.json           # Estilos predefinidos
-│   ├── quality.json           # Calidad de imagen
-│   ├── shots.json             # Tipos de planos
-│   ├── skin-tones.json        # Tonos de piel
-│   ├── summary.json           # Resúmenes/intros para prompts comunes
-│   └── summary-spicy.json     # Resúmenes alternativos para modo "spicy"
+│   ├── angles.json            # Ángulos de cámara (25 items - perspectiva)
+│   ├── body-types.json        # Tipos de cuerpo (24 items - volumen/peso)
+│   ├── body-shapes.json       # Formas corporales (25 items - distribución)
+│   ├── body-proportions.json  # Proporciones (25 items - proporciones específicas)
+│   ├── body-details.json      # Detalles corporales (25 items - textura/definición)
+│   ├── compositions.json      # Composiciones visuales (20 items)
+│   ├── eyes.json              # Colores y tipos de ojos (32 items)
+│   ├── finishes.json          # Acabados de imagen (30 items - estilos fotográficos)
+│   ├── hair.json              # Estilos de cabello (30 items)
+│   ├── lighting.json          # Tipos de iluminación (20 items - técnicas profesionales)
+│   ├── locations.json         # Locaciones (24 items)
+│   ├── modes.json             # Configuración de modos (zero, cinematic, detailed, spicy)
+│   ├── poses.json             # Poses (20 items - posturas corporales)
+│   ├── presets.json           # Estilos predefinidos (12 presets)
+│   ├── quality.json           # Calidad de imagen (20 items - resolución/realismo)
+│   ├── shots.json             # Tipos de planos (26 items - tamaño de frame)
+│   ├── skin-tones.json        # Tonos de piel (24 items)
+│   ├── summary.json           # Resúmenes/intros para prompts comunes (20 items)
+│   └── summary-spicy.json     # Resúmenes alternativos para modo "spicy" (15 items)
 ├── package.json               # Dependencias y scripts
 └── README.md                  # Este archivo
 ```
+
+## Modos de Generación
+
+Los modos controlan la cantidad de detalles y tipo de introducción:
+
+| Modo | Intro | Quality items | Finish items | Uso |
+|------|-------|-------|--------|-----|
+| **zero** | Simple: "A professional photo of a woman." | 1 | 1 | Prompts minimalistas |
+| **cinematic** | Normal (20 options) | 2 | 2 | Balance calidad-detalle (DEFAULT) |
+| **detailed** | Normal (20 options) | 3 | 2 | Máximo realismo |
+| **spicy** | Audaz (15 options + drama) | 1 | 2 | Estilo editorial dramático |
+
+## Presets (Estilos Predefinidos)
+
+Los presets override el lighting aleatorio y fuerzan un estilo visual específico:
+
+- `cinematic`: Iluminación cinematográfica y color grading
+- `editorial`: Estilo fotográfico editorial profesional
+- `noir`: Aesthetic noir con iluminación baja
+- `minimal`: Composición y lighting minimalista
+- `luxury`: Styling lujoso con iluminación profesional
+- `glamour`: Estilo glamour con lighting halagador
+- `natural`: Iluminación natural y estilo candid
+- `artistic`: Composición artística y color correction
+- `beauty`: Lighting de belleza (butterfly, loop)
+- `moody`: Atmospheric y tonos dramáticos
+- `studio`: Studio profesional estándar
+- `commercial`: Comercial/advertising focused
 
 ## Tecnologías
 
@@ -251,11 +285,13 @@ docker-compose logs -f prompt-generator
 
 ## Características
 
-✨ Generación de prompts aleatorios personalizables
-🎨 Múltiples datasets para diferentes elementos visuales
-⚙️ Modos de generación (cinematic, fantasy, etc.)
-🔧 Presets predefinidos para estilos específicos
-📊 Endpoint para consultar todas las opciones disponibles
+✨ Generación de prompts aleatorios coherentes y visuales para z-image turbo
+🎨 20+ JSON datasets con 20-32 items cada uno (400K+ combinaciones posibles)
+⚙️ 4 modos de generación (zero, cinematic, detailed, spicy)
+🔧 12 presets predefinidos para estilos específicos
+🎯 Lenguaje fotográfico profesional optimizado para Stable Diffusion
+📊 Endpoints para generar prompts y consultar todas las opciones disponibles
+✅ Validación de coherencia para evitar contradicciones en combinaciones
 
 ## Desarrollo
 
@@ -293,6 +329,40 @@ El proyecto utiliza funciones especializadas "builders" que generan diferentes s
 
 Cada builder es independiente y puede ser reutilizado o extendido según necesidades.
 
-## Licencia
+## Coherencia de Datos
 
-ISC
+El proyecto garantiza coherencia en la generación de prompts mediante una separación clara de conceptos en los datos:
+
+### Separación de Propósitos en Datos
+
+**Descripción del Cuerpo:**
+- **body-types.json** (24 items): Volumen/peso corporal (slender, muscular, plus-size, etc.)
+- **body-shapes.json** (25 items): Distribución de volumen/silueta (hourglass, pear, apple, rectangular, etc.)
+- **body-proportions.json** (25 items): Proporciones específicas (limb length, waist-hip ratio, shoulder width, etc.)
+- **body-details.json** (25 items): Textura y definición muscular (muscle striations, skin luminosity, etc.)
+  - ➜ Combinadas en `body-builder.js` para descripciones coherentes del cuerpo
+
+**Descripción de Cámara:**
+- **shots.json** (26 items): Tamaño de frame y body positioning (close-up, waist-up, full-body, sitting, reclining, etc.)
+- **angles.json** (25 items): Perspectiva de cámara SOLO (eye-level, low-angle, high-angle, dutch angle, wide lens, telephoto, etc.)
+- **compositions.json** (20 items): Estructura visual (rule of thirds, golden ratio, leading lines, depth layering, etc.)
+  - ➜ Combinadas en `camera-builder.js` para descripciones coherentes de cámara
+
+**Calidad y Acabados:**
+- **quality.json** (20 items): Resolución y realismo SOLO (4k, 8k, hyperrealistic, photorealistic, anatomically precise, etc.)
+- **finishes.json** (30 items): Estilos fotográficos y acabados (editorial, neo-noir, vintage film, fine art, etc.)
+  - ➜ Separados intencionalmente para evitar redundancias
+
+### Validaciones de Coherencia
+
+Esta separación asegura que combinaciones aleatorias no produzcan contradicciones lógicas. Por ejemplo:
+- ✅ "full-body shot" + "eye-level perspective" + "centered composition" = Coherente
+- ✅ "close-up shot" + "high-angle view" + "rule of thirds" = Coherente
+- ❌ "close-up shot" + "bird's eye overhead view" = Evitado (perspectivas incompatibles)
+
+Todos los JSON han sido validados para garantizar:
+- No hay términos duplicados exactos
+- Las separaciones de concepto son claras
+- Las combinaciones generadas son visualmente coherentes para z-image turbo
+
+## Licencia
