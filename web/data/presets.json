@@ -1,0 +1,22 @@
+{
+  "cinematic": {
+    "lighting": "cinematic lighting",
+    "finish": "cinematic color grading",
+    "composition": "diagonal composition"
+  },
+  "editorial": {
+    "lighting": "studio lighting",
+    "finish": "editorial photography",
+    "composition": "off-center composition"
+  },
+  "noir": {
+    "lighting": "dramatic low-key lighting",
+    "finish": "neo-noir aesthetic",
+    "composition": "diagonal composition"
+  },
+  "minimal": {
+    "lighting": "soft natural lighting",
+    "finish": "minimalist aesthetic",
+    "composition": "negative space composition"
+  }
+}

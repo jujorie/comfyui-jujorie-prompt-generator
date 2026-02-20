@@ -1,0 +1,24 @@
+{
+  "zero": {
+    "maxQualities": 1,
+    "maxFinishes": 1,
+    "simplifyPrompt": true
+  },
+  "cinematic": {
+    "maxQualities": 2,
+    "maxFinishes": 2,
+    "simplifyPrompt": false
+  },
+  "detailed": {
+    "maxQualities": 3,
+    "maxFinishes": 2,
+    "simplifyPrompt": false
+  },
+  "spicy": {
+    "maxQualities": 1,
+    "maxFinishes": 2,
+    "simplifyPrompt": true,
+    "forceLighting": "dramatic low-key lighting",
+    "forceComposition": "diagonal composition"
+  }
+}
