@@ -138,6 +138,36 @@ GET /prompt?mode=zero&format=text
 GET /prompt?lighting=natural&format=json
 ```
 
+### GET `/prompt/closeup`
+
+Genera un prompt de fotografía de close-ups (primeros planos) - cara o cara y hombros SOLO.
+
+Similar a `/prompt` pero garantiza que siempre genera planos cercanos:
+- `extreme close-up facial`
+- `head and shoulders portrait`
+- `chest-up portrait`
+- `beauty closeup detail`
+- `detail shot of features`
+- `intimate portrait shot`
+- `bust portrait`
+
+**Parámetros de Query:**
+Soporta los mismos parámetros que `/prompt`:
+- `style`: Preset específico
+- `lighting`: Iluminación específica
+- `mode`: Modo de generación (zero, cinematic, detailed, spicy)
+- `format`: json o text
+
+**Respuesta:** Idéntica a `/prompt` pero con shots garantizados como close-up.
+
+**Ejemplos:**
+```
+GET /prompt/closeup
+GET /prompt/closeup?mode=spicy&style=beauty
+GET /prompt/closeup?format=text&lighting=butterfly
+GET /prompt/closeup?mode=detailed
+```
+
 ### GET `/options`
 
 Retorna todos los datasets disponibles con las opciones para cada categoría.
@@ -169,14 +199,16 @@ web/
 ├── src/
 │   ├── server.js              # Servidor Express principal
 │   ├── template.js            # Plantilla para construcción de prompts
+│   ├── closeup-template.js    # Plantilla para prompts de close-up
 │   ├── data-loader.js         # Cargador de archivos JSON de datos
 │   ├── body-builder.js        # Constructor de descripción de cuerpo
 │   ├── camera-builder.js      # Constructor de descripción de cámara
+│   ├── closeup-camera-builder.js # Constructor de cámara para close-ups
 │   ├── model-builder.js       # Constructor de descripción de modelo
 │   ├── finish-builder.js      # Constructor de descripción de finishes
 │   ├── summary-builder.js     # Constructor de resumen/intro
 │   └── utils/
-│       └── random.js          # Funciones de selección aleatoria
+│       └── random.js          # Funciones de selección aleatoria (includes pickCloseupShot)
 ├── data/
 │   ├── angles.json            # Ángulos de cámara (25 items - perspectiva)
 │   ├── body-types.json        # Tipos de cuerpo (24 items - volumen/peso)
@@ -290,7 +322,8 @@ docker-compose logs -f prompt-generator
 ⚙️ 4 modos de generación (zero, cinematic, detailed, spicy)
 🔧 12 presets predefinidos para estilos específicos
 🎯 Lenguaje fotográfico profesional optimizado para Stable Diffusion
-📊 Endpoints para generar prompts y consultar todas las opciones disponibles
+📊 2 endpoints: `/prompt` (general) y `/prompt/closeup` (primeros planos)
+🔍 Filtro automático de close-ups con perspectivas cinematográficas
 ✅ Validación de coherencia para evitar contradicciones en combinaciones
 
 ## Desarrollo

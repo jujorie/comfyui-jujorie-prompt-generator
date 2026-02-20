@@ -10,3 +10,17 @@ export function pickMultiple(array, count) {
 export function pickOrDefault(value, array) {
   return value || pick(array);
 }
+
+export function pickCloseupShot(shots) {
+  const closeupShots = shots.filter(shot =>
+    shot.includes("close-up") ||
+    shot.includes("facial") ||
+    shot.includes("portrait") ||
+    shot.includes("beauty") ||
+    shot.includes("detail") ||
+    shot.includes("bust") ||
+    shot.includes("intimate")
+  );
+  return closeupShots.length > 0 ? pick(closeupShots) : pick(shots);
+}
+
