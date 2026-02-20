@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Presets Configuration Schema",
+  "description": "Schema for presets.json - defines style presets with predefined lighting and finish settings",
+  "type": "object",
+  "additionalProperties": {
+    "type": "object",
+    "description": "A style preset configuration",
+    "required": ["lighting", "finish"],
+    "properties": {
+      "lighting": {
+        "type": "string",
+        "description": "Predefined lighting style that overrides random selection for this preset",
+        "minLength": 1,
+        "examples": [
+          "cinematic lighting",
+          "studio lighting",
+          "dramatic low-key lighting",
+          "soft natural lighting"
+        ]
+      },
+      "finish": {
+        "type": "string",
+        "description": "Predefined finish/style that overrides random selection for this preset",
+        "minLength": 1,
+        "examples": [
+          "cinematic color grading",
+          "editorial photography",
+          "neo-noir aesthetic",
+          "minimalist aesthetic"
+        ]
+      }
+    },
+    "additionalProperties": false
+  },
+  "examples": [
+    {
+      "cinematic": {
+        "lighting": "cinematic lighting",
+        "finish": "cinematic color grading"
+      },
+      "editorial": {
+        "lighting": "studio lighting",
+        "finish": "editorial photography"
+      },
+      "noir": {
+        "lighting": "dramatic low-key lighting",
+        "finish": "neo-noir aesthetic"
+      },
+      "minimal": {
+        "lighting": "soft natural lighting",
+        "finish": "minimalist aesthetic"
+      }
+    }
+  ]
+}

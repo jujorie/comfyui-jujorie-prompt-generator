@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Modes Configuration Schema",
+  "description": "Schema for modes.json - defines prompt generation modes and their parameters",
+  "type": "object",
+  "additionalProperties": {
+    "type": "object",
+    "description": "A prompt generation mode configuration",
+    "required": ["maxQualities", "maxFinishes", "simplifyPrompt"],
+    "properties": {
+      "maxQualities": {
+        "type": "integer",
+        "description": "Maximum number of quality descriptors to include in the prompt",
+        "minimum": 0,
+        "maximum": 5,
+        "examples": [1, 2, 3]
+      },
+      "maxFinishes": {
+        "type": "integer",
+        "description": "Maximum number of finish/style descriptors to include in the prompt",
+        "minimum": 0,
+        "maximum": 5,
+        "examples": [1, 2, 3]
+      },
+      "simplifyPrompt": {
+        "type": "boolean",
+        "description": "Whether to simplify the prompt by reducing detail and variation",
+        "examples": [true, false]
+      },
+      "forceLighting": {
+        "type": "string",
+        "description": "Optional forced lighting style that overrides random selection",
+        "examples": ["dramatic low-key lighting", "soft natural lighting"]
+      },
+      "forceFish": {
+        "type": "string",
+        "description": "Optional forced finish style (currently unused)",
+        "examples": ["editorial photography"]
+      }
+    },
+    "additionalProperties": false
+  },
+  "examples": [
+    {
+      "zero": {
+        "maxQualities": 1,
+        "maxFinishes": 1,
+        "simplifyPrompt": true
+      },
+      "cinematic": {
+        "maxQualities": 2,
+        "maxFinishes": 2,
+        "simplifyPrompt": false
+      },
+      "detailed": {
+        "maxQualities": 3,
+        "maxFinishes": 2,
+        "simplifyPrompt": false
+      },
+      "spicy": {
+        "maxQualities": 1,
+        "maxFinishes": 2,
+        "simplifyPrompt": true,
+        "forceLighting": "dramatic low-key lighting"
+      }
+    }
+  ]
+}

@@ -1,22 +1,51 @@
 {
+  "$schema": "./presets.schema.json",
   "cinematic": {
     "lighting": "cinematic lighting",
-    "finish": "cinematic color grading",
-    "composition": "diagonal composition"
+    "finish": "cinematic color grading"
   },
   "editorial": {
     "lighting": "studio lighting",
-    "finish": "editorial photography",
-    "composition": "off-center composition"
+    "finish": "editorial photography"
   },
   "noir": {
     "lighting": "dramatic low-key lighting",
-    "finish": "neo-noir aesthetic",
-    "composition": "diagonal composition"
+    "finish": "neo-noir aesthetic"
   },
   "minimal": {
     "lighting": "soft natural lighting",
-    "finish": "minimalist aesthetic",
-    "composition": "negative space composition"
+    "finish": "minimalist aesthetic"
+  },
+  "luxury": {
+    "lighting": "three-point lighting",
+    "finish": "high fashion glossy finish"
+  },
+  "glamour": {
+    "lighting": "butterfly lighting setup",
+    "finish": "professional studio polish"
+  },
+  "natural": {
+    "lighting": "golden hour warm ambient light",
+    "finish": "candid lifestyle feel"
+  },
+  "artistic": {
+    "lighting": "chiaroscuro dramatic contrast",
+    "finish": "artistic color correction"
+  },
+  "beauty": {
+    "lighting": "loop lighting technique",
+    "finish": "professional beauty portrait"
+  },
+  "moody": {
+    "lighting": "silhouette backlighting effect",
+    "finish": "moody atmospheric grading"
+  },
+  "studio": {
+    "lighting": "studio three-point lighting",
+    "finish": "professional render quality"
+  },
+  "commercial": {
+    "lighting": "bright natural light studio",
+    "finish": "magazine cover quality"
   }
 }

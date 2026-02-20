@@ -1,4 +1,5 @@
 {
+  "$schema": "./modes.schema.json",
   "zero": {
     "maxQualities": 1,
     "maxFinishes": 1,
@@ -18,7 +19,6 @@
     "maxQualities": 1,
     "maxFinishes": 2,
     "simplifyPrompt": true,
-    "forceLighting": "dramatic low-key lighting",
-    "forceComposition": "diagonal composition"
+    "forceLighting": "dramatic low-key lighting"
   }
 }
