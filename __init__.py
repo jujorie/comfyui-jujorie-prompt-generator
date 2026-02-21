@@ -1,4 +1,4 @@
-from .prompt_fetch_node import FetchPromptFromURL
+from .nodes import FetchPromptFromURL
 
 # Node registration
 NODE_CLASS_MAPPINGS = {
