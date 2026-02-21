@@ -1,11 +1,11 @@
 import time
 import logging
 
+from .constants import DEFAULT_PROMPT_SERVER
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-
-DEFAULT_PROMPT_SERVER = "http://localhost:3005/prompt/closeup?mode=spicy&format=text"
 
 class SmartPromptController:
     @classmethod

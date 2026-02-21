@@ -1,7 +1,7 @@
 import requests
 import time
 
-DEFAULT_PROMPT_SERVER = "http://localhost:3005/prompt/closeup?mode=spicy&format=text"
+from .constants import DEFAULT_PROMPT_SERVER
 
 class FetchPromptFromURL:
     @classmethod
