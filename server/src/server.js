@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { buildPrompt } from "./template.js";
 import { buildCloseupPrompt } from "./closeup-template.js";
 import { pick, pickMultiple, pickOrDefault } from "./utils/random.js";
@@ -12,7 +13,7 @@ import { generateSummary } from "./summary-builder.js";
 const PORT = 3005;
 
 const app = express();
-
+app.use(cors());
 app.get("/prompt", (req, res) => {
   const { style, lighting, mode, format = "json" } = req.query;
 
