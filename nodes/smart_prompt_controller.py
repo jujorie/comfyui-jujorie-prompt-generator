@@ -49,13 +49,6 @@ class SmartPromptController:
 
     @classmethod
     def IS_CHANGED(cls, fetch, url, prompt):
-        """
-        Control cache invalidation.
-        
-        - If fetch=True: always invalidate cache to allow continuous updates from server
-        - If fetch=False: only invalidate if the manual prompt text changes
-        """
-        logger.debug(f"[SmartPromptController.IS_CHANGED] fetch={fetch}")
         if fetch:
             # Always fetch, always update cache
             result = float(time.time())
