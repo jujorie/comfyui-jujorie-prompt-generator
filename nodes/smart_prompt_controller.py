@@ -8,9 +8,6 @@ logger = logging.getLogger(__name__)
 DEFAULT_PROMPT_SERVER = "http://localhost:3005/prompt/closeup?mode=spicy&format=text"
 
 class SmartPromptController:
-    COLOR = "#3498db"      # color del nodo (azul)
-    BGCOLOR = "#2c3e50"    # fondo oscuro
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
