@@ -1,12 +1,14 @@
 import { dataSets } from "../data-loader.js";
-import { pick } from "../utils/random.js";
+import { pickOrEmpty, filterByKeywords } from "../utils/random.js";
 
-export function generateSummary(mode) {
+export function generateSummary(mode, filters = {}) {
   if (mode === "spicy") {
-    return pick(dataSets.summarySpicy);
+    const summarySpicy = filterByKeywords(dataSets.summarySpicy, filters.summary || []);
+    return pickOrEmpty(summarySpicy);
   } else if (mode === "zero") {
     return "A professional photo of a woman.";
   } else {
-    return pick(dataSets.summary);
+    const summary = filterByKeywords(dataSets.summary, filters.summary || []);
+    return pickOrEmpty(summary);
   }
 }

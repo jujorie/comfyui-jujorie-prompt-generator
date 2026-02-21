@@ -50,6 +50,48 @@
   (1.58 × 10^15 combinaciones)
 ```
 
+---
+
+## 🎯 Impacto del Filtrado Dinámico
+
+Con la introducción del filtrado dinámico (v2.0+), el número de combinaciones posibles se reduce dependiendo de los filtros aplicados:
+
+### Ejemplos de Reducción
+
+**Filtro simple en un dataset:**
+```
+/prompt?eyes=blue
+→ Solo 3 items de eyes en lugar de 32
+→ Reducción: 32 → 3 items (81% menos)
+→ Total: 810M → 75.9M (reducción similar en cascada)
+```
+
+**Múltiples filtros:**
+```
+/prompt?eyes=blue&skin=pale&hair=blonde
+→ eyes: 32 → 2
+→ skin: 24 → 3
+→ hair: 30 → 4
+→ Total: ~23.6M combinaciones (99.9% reducción)
+```
+
+**Filtros en camera:**
+```
+/prompt?shots=full&angles=eye&compositions=rule
+→ shots: 26 → 1
+→ angles: 25 → 2
+→ compositions: 20 → 2
+→ Total: 375K combinaciones en camera (93% reducción)
+```
+
+### Ventajas del Filtrado
+
+- ✅ **Control visual**: Genera prompts dentro de parámetros específicos
+- ✅ **Consistencia**: Crea series de prompts relacionados
+- ✅ **Optimización**: Reduce opciones infladas en datasets grandes
+- ✅ **Flexibilidad**: Se pueden combinar sin perder randomización
+- ✅ **Fallback**: Si no hay coincidencias, retorna string vacío (no rompe el prompt)
+
 ### /prompt/closeup
 ```
 Solo 7 shots en lugar de 26

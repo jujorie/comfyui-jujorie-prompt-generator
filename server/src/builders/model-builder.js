@@ -1,10 +1,14 @@
 import { dataSets } from "../data-loader.js";
-import { pick } from "../utils/random.js";
+import { pick, pickOrEmpty, filterByKeywords } from "../utils/random.js";
 import { bodyBuild } from "./body-builder.js";
 
-export function generateModel() {
-  return `She has ${pick(dataSets.eyes)}.
-She has ${pick(dataSets.hair)}.
-She has a ${bodyBuild()}.
-She has ${pick(dataSets.skinTones)}.`;
+export function generateModel(filters = {}) {
+  const eyes = filterByKeywords(dataSets.eyes, filters.eyes || []);
+  const hair = filterByKeywords(dataSets.hair, filters.hair || []);
+  const skinTones = filterByKeywords(dataSets.skinTones, filters.skinTones || []);
+  
+  return `She has ${pickOrEmpty(eyes)}.
+She has ${pickOrEmpty(hair)}.
+She has a ${bodyBuild(filters)}.
+She has ${pickOrEmpty(skinTones)}.`;
 }

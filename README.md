@@ -71,10 +71,21 @@ Advanced node with dual-mode prompt control and automatic UI updates.
 - ✓ Smart prompt controller with dual-mode operation
 - ✓ Real-time UI widget updates via JavaScript
 - ✓ Persistent values in workflow JSON
-- ✓ Default prompt server included (`/web`)
+- ✓ Default prompt server included (`/web`) with **dynamic filtering**
 - ✓ Simple integration with CLIP Text Encode
 - ✓ Timeout control (2000ms default)
 - ✓ Detailed error messages
+
+### Prompt Generator Server Features
+
+- ✨ Generación de prompts aleatorios para z-image turbo (Stable Diffusion optimizado)
+- 🎯 **Filtrado dinámico** en cualquier elemento del dataset (eyes, hair, skin, poses, etc.)
+- 🔄 Búsqueda OR multi-valor: `?skin=pale&skin=porcelain`
+- 📊 30+ datasets con 20-32 items cada uno
+- ⚙️ 4 modos: zero, cinematic, detailed, spicy
+- 🎨 12 presets predefinidos
+- 📷 Endpoints: `/prompt` (general) y `/prompt/closeup` (primeros planos)
+- 🎯 Lenguaje fotográfico profesional optimizado para Stable Diffusion
 
 ## Installation
 

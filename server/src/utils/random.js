@@ -24,3 +24,18 @@ export function pickCloseupShot(shots) {
   return closeupShots.length > 0 ? pick(closeupShots) : pick(shots);
 }
 
+export function filterByKeywords(array, keywords) {
+  if (!array || array.length === 0 || !keywords || keywords.length === 0) {
+    return array;
+  }
+  return array.filter(item =>
+    keywords.some(keyword =>
+      item.toLowerCase().includes(keyword.toLowerCase())
+    )
+  );
+}
+
+export function pickOrEmpty(array) {
+  return array && array.length > 0 ? pick(array) : "";
+}
+

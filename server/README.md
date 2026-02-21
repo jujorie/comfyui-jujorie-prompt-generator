@@ -168,6 +168,105 @@ GET /prompt/closeup?format=text&lighting=butterfly
 GET /prompt/closeup?mode=detailed
 ```
 
+## 🎯 Filtrado Dinámico
+
+Además de los parámetros estándar (`style`, `lighting`, `mode`, `format`), ambos endpoints `/prompt` y `/prompt/closeup` soportan **filtrado dinámico** para cualquier elemento del dataset.
+
+### Cómo Funciona
+
+Puede pasar cualquier parámetro que corresponda a un dataset para filtrar los resultados por palabras clave (búsqueda **OR** case-insensitive):
+
+**Parámetro de filtro → Dataset:**
+- `eyes` → Colores/tipos de ojos
+- `hair` → Estilos de cabello
+- `skin` → Tonos de piel
+- `bodyTypes` → Tipos de cuerpo
+- `bodyShapes` → Formas corporales
+- `bodyProportions` → Proporciones corporales
+- `bodyDetails` → Detalles corporales
+- `shots` → Tipos de plano
+- `angles` → Ángulos de cámara
+- `compositions` → Composiciones visuales
+- `locations` → Locaciones
+- `poses` → Poses
+- `quality` → Niveles de calidad
+- `finishes` → Acabados fotográficos
+- `lighting` → Tipos de iluminación
+- `summary` → Textos introductorios
+
+### Ejemplos de Filtrado
+
+**Filtro simple (una palabra clave):**
+```
+GET /prompt?eyes=blue
+```
+→ Busca en todos los ojos que contengan "blue" (búsqueda case-insensitive)
+→ Resultado: "icy blue eyes", "deep blue eyes with intensity", etc.
+
+**Múltiples valores (búsqueda OR):**
+```
+GET /prompt?skin=pale&skin=porcelain
+```
+→ Busca elementos que contengan "pale" **O** "porcelain"
+→ Resultado: "very pale porcelain skin" O "pale skin with cool undertones"
+
+**Múltiples datasets:**
+```
+GET /prompt?eyes=deep&eyes=blue&hair=blonde&shots=full
+```
+→ Filtra ojos (deep O blue), cabello (blonde), y planos (full)
+→ Combina filtros de diferentes datasets
+
+**Con otros parámetros:**
+```
+GET /prompt?eyes=green&mode=spicy&style=natural&format=text
+```
+→ Filtra ojos por "green" y aplica los parámetros estándar
+
+**Filtro vacío (sin coincidencias):**
+```
+GET /prompt?eyes=nonexistent
+```
+→ Si no hay coincidencias, ese campo queda vacío en la plantilla
+→ Los demás elementos se generan normalmente
+
+### Comportamiento
+
+- 🔍 **Búsqueda case-insensitive**: "BLUE" = "blue" = "Blue"
+- 🔄 **Múltiples valores del mismo param**: Se combinan con lógica OR
+- 🎲 **Sin coincidencias**: Devuelve string vacío (la plantilla lo omite)
+- 📝 **Compatible**: Los filtros funcionan con todos los parámetros estándar (`mode`, `style`, `lighting`, `format`)
+- ⚡ **Rendimiento**: Los filtros aplican búsqueda string (no regex) para máxima velocidad
+
+### Casos de Uso
+
+1. **Generar prompts con ojos específicos:**
+   ```
+   GET /prompt?eyes=green&eyes=emerald
+   ```
+
+2. **Forzar tonos de piel claros:**
+   ```
+   GET /prompt?skin=pale&skin=fair&skin=light
+   ```
+
+3. **Planos cerrados de belleza:**
+   ```
+   GET /prompt/closeup?shots=beauty&shots=detail
+   ```
+
+4. **Combinación: Close-up con iluminación específica:**
+   ```
+   GET /prompt/closeup?eyes=blue&lighting=butterfly&mode=detailed
+   ```
+
+5. **Generar serie de prompts con variaciones controladas:**
+   ```
+   GET /prompt?hair=blonde&format=text
+   GET /prompt?hair=brunette&format=text
+   GET /prompt?hair=red&format=text
+   ```
+
 ### GET `/options`
 
 Retorna todos los datasets disponibles con las opciones para cada categoría.
