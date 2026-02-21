@@ -4,9 +4,6 @@ import time
 DEFAULT_PROMPT_SERVER = "http://localhost:3005/prompt/closeup?mode=spicy&format=text"
 
 class FetchPromptFromURL:
-    COLOR = "#2ecc71"      # color del nodo (verde)
-    BGCOLOR = "#1e8449"    # fondo de
-
     @classmethod
     def INPUT_TYPES(cls):
         return {
