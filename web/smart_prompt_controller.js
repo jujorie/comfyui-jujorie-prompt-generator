@@ -13,7 +13,9 @@ app.registerExtension({
             const nodes = app.graph._nodes || app.graph.nodes || [];
             const smartPromptNode = nodes.find(n => n?.comfyClass === NODE_DISPLAY_NAME);
 
-            if (!smartPromptNode) return;
+            if (!smartPromptNode) {
+              return;
+            }
 
             const fetchWidget = smartPromptNode.widgets?.find(w => w.name === "fetch");
             const urlWidget = smartPromptNode.widgets?.find(w => w.name === "url");

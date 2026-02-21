@@ -45,39 +45,7 @@ class SmartPromptController:
     CATEGORY = "utils/prompt"
 
     def process_prompt(self, fetch, url, prompt):
-        """
-        Process prompt based on fetch mode.
-        
-        Returns the final prompt (updated in OUTPUT in real-time):
-        - fetch=False: returns the manual prompt input
-        - fetch=True: fetches prompt from URL and returns it (overwrites manual input)
-        """
-        logger.debug(f"[SmartPromptController] fetch={fetch}, url={url}")
-        
-        if fetch:
-            try:
-                logger.debug(f"[SmartPromptController] Fetching from {url}...")
-                response = requests.get(url, timeout=2.0)
-                response.raise_for_status()
-                fetched_prompt = response.text.strip()
-                logger.debug(f"[SmartPromptController] Fetched successfully. Length: {len(fetched_prompt)} chars")
-                logger.debug(f"[SmartPromptController] Content preview: {fetched_prompt[:100]}...")
-                return (fetched_prompt,)
-            except requests.exceptions.Timeout:
-                logger.error(f"[SmartPromptController] Timeout fetching from {url}")
-                raise Exception(f"Timeout fetching prompt from {url} (2000ms exceeded)")
-            except requests.exceptions.ConnectionError as e:
-                logger.error(f"[SmartPromptController] Connection error: {e}")
-                raise Exception(f"Connection error fetching prompt from {url}: {str(e)}")
-            except requests.exceptions.HTTPError as e:
-                logger.error(f"[SmartPromptController] HTTP error: {e}")
-                raise Exception(f"HTTP error {response.status_code} fetching prompt from {url}: {str(e)}")
-            except Exception as e:
-                logger.error(f"[SmartPromptController] Unexpected error: {e}")
-                raise Exception(f"Error fetching prompt from {url}: {str(e)}")
-        else:
-            logger.debug(f"[SmartPromptController] Manual mode. Prompt length: {len(prompt)} chars")
-            return (prompt,)
+        return (prompt,)
 
     @classmethod
     def IS_CHANGED(cls, fetch, url, prompt):
