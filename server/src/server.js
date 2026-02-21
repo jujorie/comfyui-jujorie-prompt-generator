@@ -1,14 +1,9 @@
 import express from "express";
 import cors from "cors";
-import { buildPrompt } from "./templates/template.js";
-import { buildCloseupPrompt } from "./templates/closeup-template.js";
-import { pick, pickMultiple, pickOrDefault } from "./utils/random.js";
+import { buildPrompt, buildCloseupPrompt } from "./templates/index.js";
+import { pick } from "./utils/random.js";
 import { dataSets } from "./data-loader.js";
-import { generateModel } from "./model-builder.js";
-import { generateCamera } from "./camera-builder.js";
-import { generateCloseupCamera } from "./closeup-camera-builder.js";
-import { generateFinishes } from "./finish-builder.js";
-import { generateSummary } from "./summary-builder.js";
+import { generateModel, generateCamera, generateCloseupCamera, generateFinishes, generateSummary } from "./builders/index.js";
 
 const PORT = 3005;
 

@@ -1,5 +1,5 @@
-import { dataSets } from "./data-loader.js";
-import { pick } from "./utils/random.js";
+import { dataSets } from "../data-loader.js";
+import { pick } from "../utils/random.js";
 
 export function generateSummary(mode) {
   if (mode === "spicy") {
