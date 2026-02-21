@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
-import { buildPrompt } from "./template.js";
-import { buildCloseupPrompt } from "./closeup-template.js";
+import { buildPrompt } from "./templates/template.js";
+import { buildCloseupPrompt } from "./templates/closeup-template.js";
 import { pick, pickMultiple, pickOrDefault } from "./utils/random.js";
 import { dataSets } from "./data-loader.js";
 import { generateModel } from "./model-builder.js";
