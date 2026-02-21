@@ -1,0 +1,15 @@
+[project]
+name = "comfyui-prompt-fetch-node"
+version = "1.0.0"
+description = "ComfyUI custom node that fetches prompts from a URL"
+authors = [
+    { name="Juan Jose Riera" }
+]
+dependencies = [
+    "requests>=2.31.0"
+]
+
+[tool.comfy]
+PublisherId = "jujorie"
+DisplayName = "ComfyUI Prompt Fetch Node"
+Icon = ""
