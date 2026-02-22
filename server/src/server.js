@@ -7,7 +7,6 @@ import { dataSets } from "./data-loader.js";
 import { generateModel, generateCamera, generateCloseupCamera, generateFinishes, generateSummary } from "./builders/index.js";
 import { getOpenApi } from "./open-api.js";
 import { validateQueryParameters, validateMode, validateStyle, validateFormat } from "./validations.js";
-import { PromptServerError } from "./errors.js";
 
 const openapi = getOpenApi();
 
