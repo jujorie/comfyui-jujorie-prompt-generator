@@ -43,22 +43,6 @@ export function extractFilters(queryParams) {
   return filters;
 }
 
-export function validateQueryParameters(queryParams) {
-  const allValidParams = new Set([...RESERVED_PARAMS, ...Object.keys(DATASET_MAP)]);
-  
-  for (const param of Object.keys(queryParams)) {
-    if (!allValidParams.has(param)) {
-      return {
-        valid: false,
-        invalidParam: param,
-        validParams: Array.from(allValidParams).sort()
-      };
-    }
-  }
-  
-  return { valid: true };
-}
-
 export function applyFilters(data, filters) {
   const filtered = { ...data };
   
@@ -75,43 +59,4 @@ export function applyFilters(data, filters) {
   }
   
   return filtered;
-}
-
-export function validateMode(mode) {
-  const validModes = Object.keys(dataSets.modes).filter(key => key !== "$schema");
-  if (!validModes.includes(mode)) {
-    return {
-      valid: false,
-      parameter: "mode",
-      value: mode,
-      validValues: validModes
-    };
-  }
-  return { valid: true };
-}
-
-export function validateStyle(style) {
-  const validStyles = Object.keys(dataSets.presets).filter(key => key !== "$schema");
-  if (!validStyles.includes(style)) {
-    return {
-      valid: false,
-      parameter: "style",
-      value: style,
-      validValues: validStyles
-    };
-  }
-  return { valid: true };
-}
-
-export function validateFormat(format) {
-  const validFormats = ["json", "text"];
-  if (!validFormats.includes(format)) {
-    return {
-      valid: false,
-      parameter: "format",
-      value: format,
-      validValues: validFormats
-    };
-  }
-  return { valid: true };
 }
