@@ -7,8 +7,15 @@ export function generateModel(filters = {}) {
   const hair = filterByKeywords(dataSets.hair, filters.hair || []);
   const skinTones = filterByKeywords(dataSets.skinTones, filters.skinTones || []);
   
-  return `She has ${pickOrEmpty(eyes)}.
-She has ${pickOrEmpty(hair)}.
-She has a ${bodyBuild(filters)}.
-She has ${pickOrEmpty(skinTones)}.`;
+  const parts = [
+    pickOrEmpty(eyes),
+    pickOrEmpty(hair),
+    bodyBuild(filters),
+    pickOrEmpty(skinTones)
+  ];
+  
+  return parts
+    .filter(part => part.trim() !== '')
+    .map(part => `She has ${part}.`)
+    .join('\n');
 }

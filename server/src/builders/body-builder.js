@@ -7,5 +7,14 @@ export function bodyBuild(filters = {}) {
   const bodyProportions = filterByKeywords(dataSets.bodyProportions, filters.bodyProportions || []);
   const bodyDetails = filterByKeywords(dataSets.bodyDetails, filters.bodyDetails || []);
   
-  return `${pickOrEmpty(bodyTypes)}, ${pickOrEmpty(bodyShapes)}, ${pickOrEmpty(bodyProportions)}, ${pickOrEmpty(bodyDetails)}`;
+  const parts = [
+    pickOrEmpty(bodyTypes),
+    pickOrEmpty(bodyShapes),
+    pickOrEmpty(bodyProportions),
+    pickOrEmpty(bodyDetails)
+  ];
+  
+  const body = parts.filter(part => part.trim() !== '').join(', ');
+  
+  return body.trim() !== '' ? `a ${body}` : '';
 }

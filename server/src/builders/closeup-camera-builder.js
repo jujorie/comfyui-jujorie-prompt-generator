@@ -6,5 +6,11 @@ export function generateCloseupCamera(filters = {}) {
   const angles = filterByKeywords(dataSets.angles, filters.angles || []);
   const compositions = filterByKeywords(dataSets.compositions, filters.compositions || []);
   
-  return `${pickCloseupShot(shots)}, ${pickOrEmpty(angles)}, ${pickOrEmpty(compositions)}`;
+  const parts = [
+    pickCloseupShot(shots),
+    pickOrEmpty(angles),
+    pickOrEmpty(compositions)
+  ];
+  
+  return parts.filter(part => part.trim() !== '').join(', ');
 }
