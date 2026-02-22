@@ -21,4 +21,5 @@ def get_local_ipv4():
 
 
 _LOCAL_IP = get_local_ipv4()
-DEFAULT_PROMPT_SERVER = f"http://{_LOCAL_IP}:3005/prompt/closeup?mode=spicy&format=text"
+DEFAULT_PROMPT_HOST = f"http://{_LOCAL_IP}:3005"
+DEFAULT_PROMPT_SERVER = f"{DEFAULT_PROMPT_HOST}/prompt/closeup?mode=spicy&format=text"

@@ -4,6 +4,7 @@ Sin entradas requeridas, solo parámetros configurables del nodo.
 """
 
 from typing import Dict, Any
+from .constants import DEFAULT_PROMPT_HOST
 
 
 class PromptURLBuilder:
@@ -23,7 +24,7 @@ class PromptURLBuilder:
                 "host": (
                     "STRING",
                     {
-                        "default": "http://localhost:3005",
+                        "default": DEFAULT_PROMPT_HOST,
                         "multiline": False,
                     },
                 ),
