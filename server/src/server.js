@@ -20,7 +20,7 @@ app.get("/prompt", (req, res, next) => {
     validateQueryParameters(req.query);
     validateMode(req.query.mode);
     validateStyle(req.query.style);
-    validateFormat(req.query.format || "json");
+    validateFormat(req.query.format);
 
     const { style, lighting, mode, format = "json" } = req.query;
 
