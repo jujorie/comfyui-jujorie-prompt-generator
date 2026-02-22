@@ -1,6 +1,6 @@
 """
 Prompt URL Builder - Construye URLs dinámicas para el servidor de prompts.
-Sin entradas requeridas, solo parámetros configurables del nodo.
+Sin entradas requeridas, solo parámetros configurable del nodo.
 """
 
 import time
@@ -16,7 +16,7 @@ class PromptURLBuilder:
     
     @classmethod
     def INPUT_TYPES(cls) -> Dict[str, Dict[str, Any]]:
-        """Define los parámetros configurables del nodo."""
+        """Define los parámetros configurable del nodo."""
         return {
             "required": {
                 "host": (
