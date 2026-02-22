@@ -76,3 +76,42 @@ export function applyFilters(data, filters) {
   
   return filtered;
 }
+
+export function validateMode(mode) {
+  const validModes = Object.keys(dataSets.modes).filter(key => key !== "$schema");
+  if (!validModes.includes(mode)) {
+    return {
+      valid: false,
+      parameter: "mode",
+      value: mode,
+      validValues: validModes
+    };
+  }
+  return { valid: true };
+}
+
+export function validateStyle(style) {
+  const validStyles = Object.keys(dataSets.presets).filter(key => key !== "$schema");
+  if (!validStyles.includes(style)) {
+    return {
+      valid: false,
+      parameter: "style",
+      value: style,
+      validValues: validStyles
+    };
+  }
+  return { valid: true };
+}
+
+export function validateFormat(format) {
+  const validFormats = ["json", "text"];
+  if (!validFormats.includes(format)) {
+    return {
+      valid: false,
+      parameter: "format",
+      value: format,
+      validValues: validFormats
+    };
+  }
+  return { valid: true };
+}

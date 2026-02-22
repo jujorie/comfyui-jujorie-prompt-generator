@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { buildPrompt, buildCloseupPrompt } from "./templates/index.js";
 import { pick } from "./utils/random.js";
-import { extractFilters, applyFilters, validateQueryParameters } from "./utils/filter.js";
+import { extractFilters, applyFilters, validateQueryParameters, validateMode, validateStyle, validateFormat } from "./utils/filter.js";
 import { dataSets } from "./data-loader.js";
 import { generateModel, generateCamera, generateCloseupCamera, generateFinishes, generateSummary } from "./builders/index.js";
 import { getOpenApi } from "./open-api.js";
@@ -25,6 +25,43 @@ app.get("/prompt", (req, res) => {
   }
 
   const { style, lighting, mode, format = "json" } = req.query;
+
+  // Validar mode si se proporciona
+  if (mode) {
+    const modeValidation = validateMode(mode);
+    if (!modeValidation.valid) {
+      return res.status(400).json({
+        error: "Invalid parameter value",
+        parameter: modeValidation.parameter,
+        value: modeValidation.value,
+        message: `Invalid value '${modeValidation.value}' for parameter '${modeValidation.parameter}'. Valid values are: ${modeValidation.validValues.join(", ")}`
+      });
+    }
+  }
+
+  // Validar style si se proporciona
+  if (style) {
+    const styleValidation = validateStyle(style);
+    if (!styleValidation.valid) {
+      return res.status(400).json({
+        error: "Invalid parameter value",
+        parameter: styleValidation.parameter,
+        value: styleValidation.value,
+        message: `Invalid value '${styleValidation.value}' for parameter '${styleValidation.parameter}'. Valid values are: ${styleValidation.validValues.join(", ")}`
+      });
+    }
+  }
+
+  // Validar format
+  const formatValidation = validateFormat(format);
+  if (!formatValidation.valid) {
+    return res.status(400).json({
+      error: "Invalid parameter value",
+      parameter: formatValidation.parameter,
+      value: formatValidation.value,
+      message: `Invalid value '${formatValidation.value}' for parameter '${formatValidation.parameter}'. Valid values are: ${formatValidation.validValues.join(", ")}`
+    });
+  }
 
   const preset = dataSets.presets[style] || {};
   const activeMode = dataSets.modes[mode] || dataSets.modes.cinematic;
@@ -80,6 +117,43 @@ app.get("/prompt/closeup", (req, res) => {
   }
 
   const { style, lighting, mode, format = "json" } = req.query;
+
+  // Validar mode si se proporciona
+  if (mode) {
+    const modeValidation = validateMode(mode);
+    if (!modeValidation.valid) {
+      return res.status(400).json({
+        error: "Invalid parameter value",
+        parameter: modeValidation.parameter,
+        value: modeValidation.value,
+        message: `Invalid value '${modeValidation.value}' for parameter '${modeValidation.parameter}'. Valid values are: ${modeValidation.validValues.join(", ")}`
+      });
+    }
+  }
+
+  // Validar style si se proporciona
+  if (style) {
+    const styleValidation = validateStyle(style);
+    if (!styleValidation.valid) {
+      return res.status(400).json({
+        error: "Invalid parameter value",
+        parameter: styleValidation.parameter,
+        value: styleValidation.value,
+        message: `Invalid value '${styleValidation.value}' for parameter '${styleValidation.parameter}'. Valid values are: ${styleValidation.validValues.join(", ")}`
+      });
+    }
+  }
+
+  // Validar format
+  const formatValidation = validateFormat(format);
+  if (!formatValidation.valid) {
+    return res.status(400).json({
+      error: "Invalid parameter value",
+      parameter: formatValidation.parameter,
+      value: formatValidation.value,
+      message: `Invalid value '${formatValidation.value}' for parameter '${formatValidation.parameter}'. Valid values are: ${formatValidation.validValues.join(", ")}`
+    });
+  }
 
   const preset = dataSets.presets[style] || {};
   const activeMode = dataSets.modes[mode] || dataSets.modes.cinematic;
