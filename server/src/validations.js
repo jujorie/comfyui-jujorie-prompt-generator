@@ -65,7 +65,7 @@ export function validateStyle(style) {
   }
 }
 
-export function validateFormat(format = json) {
+export function validateFormat(format = "json") {
   const validFormats = ["json", "text"];
   if (!validFormats.includes(format)) {
     throw new PromptServerError(
