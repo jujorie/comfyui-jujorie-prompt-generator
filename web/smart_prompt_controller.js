@@ -1,7 +1,7 @@
 import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
 
-const NODE_DISPLAY_NAME = "SmartPromptController"
+const SMART_NODE_CLASES = ["SmartPromptController", "SmartClipController"]
 
 
 async function fetchPrompt(smartPromptNode) {
@@ -68,7 +68,7 @@ app.registerExtension({
   name: "smart_prompt_controller",
 
   async nodeCreated(node) {
-    if (node.comfyClass !== NODE_DISPLAY_NAME) {
+    if (!SMART_NODE_CLASES.includes(node.comfyClass)) {
       return;
     }
 
@@ -88,7 +88,7 @@ app.registerExtension({
     api.addEventListener("executed", async (event) => {
       // Buscar el nodo SmartPromptController en el grafo
       const nodes = app.graph._nodes || app.graph.nodes || [];
-      const smartPromptNode = nodes.find(n => n?.comfyClass === NODE_DISPLAY_NAME);
+      const smartPromptNode = nodes.find(n => SMART_NODE_CLASES.includes(n?.comfyClass));
       fetchPrompt(smartPromptNode);
     });
   }

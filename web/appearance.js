@@ -11,7 +11,8 @@ const COLOR_THEMES = {
 const NODE_COLORS = {
     "SmartPromptController": "prompt",
     "FetchPromptFromURL": "prompt",
-    "PromptURLBuilder": "prompt"
+    "PromptURLBuilder": "prompt",
+    "SmartClipController": "prompt",
 };
 
 function setNodeColors(node, theme) {

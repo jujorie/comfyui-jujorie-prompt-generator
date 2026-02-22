@@ -1,16 +1,18 @@
-from .nodes import FetchPromptFromURL, SmartPromptController, PromptURLBuilder
+from .nodes import FetchPromptFromURL, SmartPromptController, SmartClipController, PromptURLBuilder
 import os
 
 # Node registration
 NODE_CLASS_MAPPINGS = {
     "FetchPromptFromURL": FetchPromptFromURL,
     "SmartPromptController": SmartPromptController,
+    "SmartClipController": SmartClipController,
     "PromptURLBuilder": PromptURLBuilder,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "FetchPromptFromURL": "Fetch Prompt From URL",
     "SmartPromptController": "Smart Prompt Controller",
+    "SmartClipController": "Smart Clip Controller",
     "PromptURLBuilder": "Prompt URL Builder",
 }
 
