@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { buildPrompt, buildCloseupPrompt } from "./templates/index.js";
 import { pick } from "./utils/random.js";
-import { extractFilters, applyFilters } from "./utils/filter.js";
+import { extractFilters, applyFilters, validateQueryParameters } from "./utils/filter.js";
 import { dataSets } from "./data-loader.js";
 import { generateModel, generateCamera, generateCloseupCamera, generateFinishes, generateSummary } from "./builders/index.js";
 import { getOpenApi } from "./open-api.js";
@@ -14,6 +14,16 @@ const PORT = 3005;
 const app = express();
 app.use(cors());
 app.get("/prompt", (req, res) => {
+  // Validar parámetros de query
+  const validation = validateQueryParameters(req.query);
+  if (!validation.valid) {
+    return res.status(400).json({
+      error: "Invalid parameter",
+      parameter: validation.invalidParam,
+      message: `The parameter '${validation.invalidParam}' is not valid. Valid parameters are: ${validation.validParams.join(", ")}`
+    });
+  }
+
   const { style, lighting, mode, format = "json" } = req.query;
 
   const preset = dataSets.presets[style] || {};
@@ -59,6 +69,16 @@ app.get("/prompt", (req, res) => {
 });
 
 app.get("/prompt/closeup", (req, res) => {
+  // Validar parámetros de query
+  const validation = validateQueryParameters(req.query);
+  if (!validation.valid) {
+    return res.status(400).json({
+      error: "Invalid parameter",
+      parameter: validation.invalidParam,
+      message: `The parameter '${validation.invalidParam}' is not valid. Valid parameters are: ${validation.validParams.join(", ")}`
+    });
+  }
+
   const { style, lighting, mode, format = "json" } = req.query;
 
   const preset = dataSets.presets[style] || {};

@@ -43,6 +43,22 @@ export function extractFilters(queryParams) {
   return filters;
 }
 
+export function validateQueryParameters(queryParams) {
+  const allValidParams = new Set([...RESERVED_PARAMS, ...Object.keys(DATASET_MAP)]);
+  
+  for (const param of Object.keys(queryParams)) {
+    if (!allValidParams.has(param)) {
+      return {
+        valid: false,
+        invalidParam: param,
+        validParams: Array.from(allValidParams).sort()
+      };
+    }
+  }
+  
+  return { valid: true };
+}
+
 export function applyFilters(data, filters) {
   const filtered = { ...data };
   
