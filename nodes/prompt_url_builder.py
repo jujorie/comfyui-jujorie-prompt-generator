@@ -146,9 +146,3 @@ class PromptURLBuilder:
             url = f"{host}/{endpoint}?format=text"
 
         return (url,)
-
-
-# Registro del nodo
-NODE_CLASS_MAPPINGS = {"PromptURLBuilder": PromptURLBuilder}
-
-NODE_DISPLAY_NAME_MAPPINGS = {"PromptURLBuilder": "Prompt URL Builder"}

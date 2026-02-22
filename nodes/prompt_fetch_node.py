@@ -49,3 +49,4 @@ class FetchPromptFromURL:
         if refresh:
             return float(time.time())
         return url
+    
