@@ -5,6 +5,9 @@ import { pick } from "./utils/random.js";
 import { extractFilters, applyFilters } from "./utils/filter.js";
 import { dataSets } from "./data-loader.js";
 import { generateModel, generateCamera, generateCloseupCamera, generateFinishes, generateSummary } from "./builders/index.js";
+import { getOpenApi } from "./open-api.js";
+
+const openapi = getOpenApi();
 
 const PORT = 3005;
 
@@ -102,6 +105,10 @@ app.get("/prompt/closeup", (req, res) => {
 
 app.get("/options", (req, res) => {
   res.json(dataSets);
+});
+
+app.get("/api", (req, res) => {
+  res.json(openapi);
 });
 
 app.listen(PORT, () => {

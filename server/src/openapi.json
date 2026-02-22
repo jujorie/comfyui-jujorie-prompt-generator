@@ -1,0 +1,358 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ComfyUI Jujorie Prompt Generator API",
+    "description": "API para generar prompts de texto con diferentes estilos y configuraciones para ComfyUI",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Jujorie"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3005",
+      "description": "Development server"
+    }
+  ],
+  "paths": {
+    "/prompt": {
+      "get": {
+        "summary": "Generate a regular prompt",
+        "description": "Generates a detailed prompt with model, location, pose, camera, lighting and finish information",
+        "parameters": [
+          {
+            "name": "style",
+            "in": "query",
+            "description": "Preset style to apply",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lighting",
+            "in": "query",
+            "description": "Specific lighting setup",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "description": "Generation mode (cinematic, portrait, etc)",
+            "schema": {
+              "type": "string",
+              "default": "cinematic"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "Response format",
+            "schema": {
+              "type": "string",
+              "enum": ["json", "text"],
+              "default": "json"
+            }
+          },
+          {
+            "name": "eyes",
+            "in": "query",
+            "description": "Filter by eye type",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hair",
+            "in": "query",
+            "description": "Filter by hair style",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skin",
+            "in": "query",
+            "description": "Filter by skin tone",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bodyTypes",
+            "in": "query",
+            "description": "Filter by body type",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bodyShapes",
+            "in": "query",
+            "description": "Filter by body shape",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bodyProportions",
+            "in": "query",
+            "description": "Filter by body proportions",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bodyDetails",
+            "in": "query",
+            "description": "Filter by body details",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "shots",
+            "in": "query",
+            "description": "Filter by shot type",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "angles",
+            "in": "query",
+            "description": "Filter by camera angle",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "compositions",
+            "in": "query",
+            "description": "Filter by composition",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locations",
+            "in": "query",
+            "description": "Filter by location",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "poses",
+            "in": "query",
+            "description": "Filter by pose",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quality",
+            "in": "query",
+            "description": "Filter by quality",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "finishes",
+            "in": "query",
+            "description": "Filter by finish",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "summary",
+            "in": "query",
+            "description": "Filter by summary elements",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "summarySpicy",
+            "in": "query",
+            "description": "Filter by spicy summary elements",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully generated prompt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "prompt": {
+                      "type": "string",
+                      "description": "Generated prompt text"
+                    },
+                    "mode": {
+                      "type": "string",
+                      "description": "Used generation mode"
+                    },
+                    "config": {
+                      "type": "object",
+                      "description": "Configuration used for generation"
+                    }
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "description": "Generated prompt as plain text"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/prompt/closeup": {
+      "get": {
+        "summary": "Generate a closeup prompt",
+        "description": "Generates a detailed closeup prompt with emphasis on facial features and details",
+        "parameters": [
+          {
+            "name": "style",
+            "in": "query",
+            "description": "Preset style to apply",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lighting",
+            "in": "query",
+            "description": "Specific lighting setup",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "description": "Generation mode",
+            "schema": {
+              "type": "string",
+              "default": "cinematic"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "Response format",
+            "schema": {
+              "type": "string",
+              "enum": ["json", "text"],
+              "default": "json"
+            }
+          },
+          {
+            "name": "eyes",
+            "in": "query",
+            "description": "Filter by eye type",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hair",
+            "in": "query",
+            "description": "Filter by hair style",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skin",
+            "in": "query",
+            "description": "Filter by skin tone",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully generated closeup prompt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "prompt": {
+                      "type": "string",
+                      "description": "Generated prompt text"
+                    },
+                    "mode": {
+                      "type": "string",
+                      "description": "Used generation mode"
+                    },
+                    "config": {
+                      "type": "object",
+                      "description": "Configuration used for generation"
+                    }
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "description": "Generated prompt as plain text"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/options": {
+      "get": {
+        "summary": "Get available options and datasets",
+        "description": "Returns all available options for filters and presets",
+        "responses": {
+          "200": {
+            "description": "Available options and datasets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api": {
+      "get": {
+        "summary": "Get OpenAPI specification",
+        "description": "Returns this OpenAPI specification in JSON format",
+        "responses": {
+          "200": {
+            "description": "OpenAPI specification",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": []
+}
