@@ -3,6 +3,7 @@ Prompt URL Builder - Construye URLs dinámicas para el servidor de prompts.
 Sin entradas requeridas, solo parámetros configurables del nodo.
 """
 
+import time
 from typing import Dict, Any
 from .constants import DEFAULT_PROMPT_HOST
 
@@ -12,10 +13,7 @@ class PromptURLBuilder:
     Custom node que construye URLs completas para solicitar prompts
     desde el servidor de generación dinámica.
     """
-
-    COLOR = "#FF6B6B"
-    BGCOLOR = "#C92A2A"
-
+    
     @classmethod
     def INPUT_TYPES(cls) -> Dict[str, Dict[str, Any]]:
         """Define los parámetros configurables del nodo."""
@@ -146,3 +144,8 @@ class PromptURLBuilder:
             url = f"{host}/{endpoint}?format=text"
 
         return (url,)
+
+    @classmethod
+    def IS_CHANGED(cls, url, refresh):
+        return float(time.time())
+        
