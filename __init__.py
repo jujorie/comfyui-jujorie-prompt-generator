@@ -1,4 +1,4 @@
-from .nodes import FetchPromptFromURL, SmartPromptController, SmartClipController, PromptURLBuilder
+from .nodes import FetchPromptFromURL, SmartPromptController, SmartClipController, PromptURLBuilder, SmartVRAMClear
 import os
 
 # Node registration
@@ -7,6 +7,7 @@ NODE_CLASS_MAPPINGS = {
     "SmartPromptController": SmartPromptController,
     "SmartClipController": SmartClipController,
     "PromptURLBuilder": PromptURLBuilder,
+    "SmartVRAMClear": SmartVRAMClear,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -14,6 +15,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "SmartPromptController": "Smart Prompt Controller",
     "SmartClipController": "Smart Clip Controller",
     "PromptURLBuilder": "Prompt URL Builder",
+    "SmartVRAMClear": "Smart VRAM Clear (Memory Safe)",
 }
 
 # Web extensions - ComfyUI will load JavaScript files from this directory

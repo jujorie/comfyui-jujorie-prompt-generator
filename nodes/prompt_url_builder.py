@@ -61,7 +61,7 @@ class PromptURLBuilder:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("url",)
     FUNCTION = "build_url"
-    CATEGORY = "prompt/utils"
+    CATEGORY = "utils/prompt"
 
     def build_url(
         self,

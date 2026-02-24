@@ -10,17 +10,21 @@ Suite of custom nodes for ComfyUI that fetch prompts from URLs and provide smart
 
 ```
 .
-├── nodes/                        # Custom node implementations
+├── nodes/                          # Custom node implementations
 │   ├── __init__.py
-│   ├── prompt_fetch_node.py     # Fetch prompt from URL node
-│   └── smart_prompt_controller.py # Smart prompt control node
-├── web/                          # Web server + JS extensions
+│   ├── prompt_fetch_node.py        # Fetch prompt from URL node
+│   ├── smart_prompt_controller.py  # Smart prompt control node
+│   ├── smart_clip_controller.py    # Smart CLIP conditioning node
+│   ├── prompt_url_builder.py       # URL builder for prompt server
+│   ├── smart_vram_clear.py         # VRAM memory management node
+│   └── constants.py
+├── web/                            # Web server + JS extensions
 │   ├── server.js
 │   ├── package.json
 │   ├── js/
 │   │   └── smart_prompt_controller.js  # UI widget updater extension
-│   └── data/                     # JSON data for prompt generation
-├── __init__.py                   # Package init (exports nodes + WEB_DIRECTORY)
+│   └── data/                       # JSON data for prompt generation
+├── __init__.py                     # Package init (exports nodes + WEB_DIRECTORY)
 ├── requirements.txt
 └── pyproject.toml
 ```
@@ -60,7 +64,77 @@ Advanced node with dual-mode prompt control and automatic UI updates.
 **How it works:**
 1. Set `fetch=true` and provide a `url`
 2. Execute the workflow
-3. The prompt is fetched from the URL
+3.# 3. Smart CLIP Controller
+Advanced node for CLIP conditioning with dual-mode operation (manual/fetch).
+
+**Inputs:**
+- `fetch` (BOOLEAN): Switch between manual and fetch mode
+- `url` (STRING): Prompt server endpoint
+- `prompt` (STRING): Manual prompt input
+- `clip` (CLIP): CLIP model for encoding
+
+**Outputs:**
+- `conditioning` (CONDITIONING): Encoded prompt conditioning
+
+**Use case:** Direct CLIP encoding with automatic prompt fetching
+
+### 4. Prompt URL Builder
+Dynamic URL builder for the prompt generation server.
+
+**Inputs:**
+- `host` (STRING): Server host (default: localhost:3005)
+- `endpoint` (CHOICE): `/prompt` or `/prompt/closeup`
+- `mode` (CHOICE): `zero`, `cinematic`, `detailed`, `spicy`
+- `style`, `lighting`, `eyes`, `hair`, `skin` (STRING): Filter parameters
+- Optional: `bodyTypes`, `bodyShapes`, `bodyProportions`, `bodyDetails`, `shots`, `angles`, `compositions`, `locations`, `poses`, `quality`, `finishes`, `summary`, `summarySpicy`
+
+**Outputs:**
+- `url` (STRING): Complete URL with all parameters
+
+**Use case:** Build dynamic URLs for the prompt server without manual URL construction
+
+### 5. Smart VRAM Clear 💾 (New!)
+Memory management node that intelligently clears VRAM, GPU cache, and Python garbage.
+
+**Inputs:**
+- `input` (ANY): Pass-through input (accepts any type)
+- `enabled` (BOOLEAN): Toggle cleaning on/off
+- `fragmentation_ratio` (FLOAT): Threshold for aggressive cleaning (default: 1.4, range: 1.1-3.0)
+- `aggressive` (BOOLEAN): Force deep model unloading
+
+**Outputs:**
+- `output` (ANY): Same as input (pass-through)
+
+**Features:**
+- ✓ 4-stage memory cleanup:
+  1. Python garbage collection
+  2. PyTorch CUDA cache clearing
+  3. ComfyUI model manager cleanup
+  4. GPU synchronization
+- ✓ Smart fragmentation detection (auto-aggressive mode)
+- ✓ Detailed logging of freed memory
+- ✓ Zero impact on workflow (input → output pass-through)
+- ✓ Optional aggressive mode for deep model unloading
+
+**Use case:** Place after image generation to clean VRAM before loading next model. Allows seamless multi-model workflows without OOM errors.
+
+**Example workflow:**
+```
+Model Load → Generate Image → Smart VRAM Clear → Next Model Load → Generate
+```
+
+**Logs output:**
+```
+[SmartVRAM] allocated=2.45GB reserved=5.23GB frag_ratio=2.14
+[SmartVRAM] Stage 1: Python garbage collection completed
+[SmartVRAM] Stage 2: Torch cache cleared and IPC collected
+[SmartVRAM] Stage 3a: ComfyUI soft cache cleared
+[SmartVRAM] Stage 3b: All models unloaded (aggressive mode)
+[SmartVRAM] Stage 4: GPU synchronized
+[SmartVRAM] mode=AGGRESSIVE freed=2.15GB new_reserved=3.08GB
+```
+
+## The prompt is fetched from the URL
 4. The INPUT `prompt` widget updates automatically with the fetched value
 5. The OUTPUT `prompt` is sent to CLIP Text Encode
 

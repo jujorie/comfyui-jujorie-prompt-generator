@@ -2,5 +2,6 @@ from .prompt_fetch_node import FetchPromptFromURL
 from .smart_prompt_controller import SmartPromptController
 from .smart_clip_controller import SmartClipController
 from .prompt_url_builder import PromptURLBuilder
+from .smart_vram_clear import SmartVRAMClear
 
-__all__ = ["FetchPromptFromURL", "SmartPromptController", "SmartClipController", "PromptURLBuilder"]
+__all__ = ["FetchPromptFromURL", "SmartPromptController", "SmartClipController", "PromptURLBuilder", "SmartVRAMClear"]
