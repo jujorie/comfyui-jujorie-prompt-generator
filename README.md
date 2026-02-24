@@ -3,14 +3,15 @@
 Suite of custom nodes for ComfyUI that fetch prompts from URLs and provide smart prompt control.
 
 **Este repo contiene:**
-- **Raíz:** Custom nodes de ComfyUI (nodos Python + extensiones web JavaScript)
-- **`/web`:** Servidor Node.js que genera prompts dinámicamente
+- **`/nodes`:** Custom nodes de ComfyUI (Python)
+- **`/web`:** Extensiones JavaScript para ComfyUI UI enhancements
+- **`/server`:** Servidor Node.js que genera prompts dinámicamente
 
 ## Project Structure
 
 ```
 .
-├── nodes/                          # Custom node implementations
+├── nodes/                          # Custom node implementations (Python)
 │   ├── __init__.py
 │   ├── prompt_fetch_node.py        # Fetch prompt from URL node
 │   ├── smart_prompt_controller.py  # Smart prompt control node
@@ -19,15 +20,50 @@ Suite of custom nodes for ComfyUI that fetch prompts from URLs and provide smart
 │   ├── smart_vram_clear.py         # VRAM memory management node
 │   ├── conditional_pass.py         # Flow control / conditional execution node
 │   └── constants.py
-├── web/                            # Web server + JS extensions
-│   ├── server.js
+├── web/                            # ComfyUI Web Extensions (JavaScript)
+│   ├── smart_prompt_controller.js  # UI widget updater for prompt fetching
+│   ├── conditional_pass_color.js   # Dynamic color feedback for conditional nodes
+│   └── appearance.js               # UI appearance customizations
+├── server/                         # Prompt Generator Server (Node.js)
+│   ├── server.js                   # Main server entry point
 │   ├── package.json
-│   ├── js/
-│   │   └── smart_prompt_controller.js  # UI widget updater extension
-│   └── data/                       # JSON data for prompt generation
+│   ├── Dockerfile
+│   ├── src/                        # Server source code
+│   │   ├── data-loader.js
+│   │   ├── errors.js
+│   │   ├── open-api.js
+│   │   ├── openapi.json
+│   │   ├── validations.js
+│   │   ├── builders/               # Prompt builders (body, camera, etc.)
+│   │   ├── routes/                 # API endpoints
+│   │   ├── templates/              # Prompt templates
+│   │   └── utils/                  # Helper utilities
+│   └── data/                       # JSON datasets for prompt generation
+│       ├── angles.json
+│       ├── body-details.json
+│       ├── body-proportions.json
+│       ├── body-shapes.json
+│       ├── body-types.json
+│       ├── compositions.json
+│       ├── eyes.json
+│       ├── finishes.json
+│       ├── hair.json
+│       ├── lighting.json
+│       ├── locations.json
+│       ├── modes.json
+│       ├── poses.json
+│       ├── presets.json
+│       ├── quality.json
+│       ├── shots.json
+│       ├── skin-tones.json
+│       ├── summary-spicy.json
+│       └── summary.json
+├── docs/                           # Documentation
+│   └── COMBINACIONES.md
 ├── __init__.py                     # Package init (exports nodes + WEB_DIRECTORY)
+├── pyproject.toml
 ├── requirements.txt
-└── pyproject.toml
+└── README.md
 ```
 
 ## Nodes
@@ -427,7 +463,7 @@ This package includes JavaScript extensions that enhance node functionality in t
 
 ### Smart Prompt Controller Widget Updater
 
-**File:** `web/js/smart_prompt_controller.js`
+**File:** `web/smart_prompt_controller.js`
 
 **What it does:**
 - Intercepts node execution results
@@ -441,7 +477,37 @@ This package includes JavaScript extensions that enhance node functionality in t
 4. When a **Smart Prompt Controller** node executes, the extension hooks into `onExecuted()`
 5. The output prompt is extracted and updates the widget value
 
-**Extension structure:**
+### Conditional Pass Color Indicator
+
+**File:** `web/conditional_pass_color.js`
+
+**What it does:**
+- Dynamically changes node color based on `enabled` boolean state
+- **Green** (`#2f8f2f` / `#1f5f1f`) when `enabled=True` → workflow passes through
+- **Red** (`#8f2f2f` / `#5f1f1f`) when `enabled=False` → workflow blocked
+- Updates in real-time as you toggle the `enabled` widget
+
+**Applies to:**
+- `ConditionalPass` (universal pass-through)
+- `ConditionalPassImage` (image-specific pass-through)
+
+**How it works:**
+1. Detects when `enabled` widget changes
+2. Updates node colors immediately
+3. Redraw triggers to show visual feedback in canvas
+
+**Example workflow visual:**
+```
+[Green node]  ✓ Workflow enabled, image passes forward
+    ↓
+[Upscaler executes]
+
+[Red node]    ❌ Workflow blocked, upscaler skipped
+    ↓
+[Upscaler NOT executed]
+```
+
+## Extension structure
 ```javascript
 app.registerExtension({
   name: "jujorie.SmartPromptController",
