@@ -21,9 +21,6 @@ def gb(x):
 
 
 class SmartVRAMClear:
-    COLOR = "#6b0000"
-    BGCOLOR = "#2b0000"
-
     @classmethod
     def INPUT_TYPES(cls):
         return {

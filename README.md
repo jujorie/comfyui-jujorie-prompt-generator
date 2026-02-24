@@ -17,6 +17,7 @@ Suite of custom nodes for ComfyUI that fetch prompts from URLs and provide smart
 │   ├── smart_clip_controller.py    # Smart CLIP conditioning node
 │   ├── prompt_url_builder.py       # URL builder for prompt server
 │   ├── smart_vram_clear.py         # VRAM memory management node
+│   ├── conditional_pass.py         # Flow control / conditional execution node
 │   └── constants.py
 ├── web/                            # Web server + JS extensions
 │   ├── server.js
@@ -134,9 +135,53 @@ Model Load → Generate Image → Smart VRAM Clear → Next Model Load → Gener
 [SmartVRAM] mode=AGGRESSIVE freed=2.15GB new_reserved=3.08GB
 ```
 
-## The prompt is fetched from the URL
-4. The INPUT `prompt` widget updates automatically with the fetched value
-5. The OUTPUT `prompt` is sent to CLIP Text Encode
+### 6. Conditional Pass 🔀 (New!)
+Flow control node that enables/disables execution of downstream nodes.
+
+**Inputs:**
+- `input` (ANY): Data to pass through
+- `enabled` (BOOLEAN): Enable/disable workflow continuation
+- `error_message` (STRING): Custom error message when disabled
+
+**Outputs:**
+- `output` (ANY): Same as input (or raises error if disabled)
+
+**Features:**
+- ✓ Universal pass-through (works with any data type)
+- ✓ Blocks downstream execution when disabled
+- ✓ Custom error messages for clarity
+- ✓ Useful for conditional workflow paths
+
+**Use case:** Generate fast image → [Conditional Pass] → Upscaler
+- `enabled=True`: Image passes to upscaler
+- `enabled=False`: Workflow stops, no upscaler execution
+
+### 6b. Conditional Pass (Image) 🖼️
+Specialized version for images with better debugging output.
+
+**Inputs:**
+- `image` (IMAGE): Image to pass through
+- `enabled` (BOOLEAN): Enable/disable workflow continuation
+- `error_message` (STRING): Custom error message when disabled
+
+**Outputs:**
+- `image` (IMAGE): Same image (or raises error if disabled)
+
+**Features:**
+- ✓ Type-safe image handling
+- ✓ Logs image resolution when passing
+- ✓ Better error messages for image-specific workflows
+
+**Example workflow:**
+```
+KSampler (fast model)
+    ↓
+Conditional Pass (Image)  ← Toggle this to enable/disable upscaling
+    ↓
+Upscaler Node
+    ↓
+Save Image
+```
 
 ## Features
 
@@ -278,10 +323,6 @@ Every ComfyUI custom node requires a Python class with:
 
 ```python
 class CustomNodeName:
-    # Node metadata
-    COLOR = "#2ecc71"          # Hex color (node header)
-    BGCOLOR = "#1e8449"        # Hex color (node background)
-    
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -309,6 +350,8 @@ class CustomNodeName:
         return False
 ```
 
+⚠️ **NOTE:** ComfyUI does NOT support `COLOR` and `BGCOLOR` properties (these were removed in recent versions). Remove them from node definitions.
+
 ### INPUT_TYPES Details
 
 Supported input types:
@@ -333,6 +376,20 @@ Options per type:
     "step": 1
 })
 ```
+
+### Supported Node Properties
+
+**✅ SUPPORTED:**
+- `INPUT_TYPES` (classmethod)
+- `RETURN_TYPES` (tuple)
+- `RETURN_NAMES` (tuple)
+- `FUNCTION` (string)
+- `CATEGORY` (string)
+- `IS_CHANGED` (classmethod)
+
+**❌ NOT SUPPORTED (ComfyUI limitation):**
+- `COLOR` - ❌ Removed in recent ComfyUI versions
+- `BGCOLOR` - ❌ Removed in recent ComfyUI versions
 
 ### Node Registration
 
