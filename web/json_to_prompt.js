@@ -27,7 +27,7 @@ app.registerExtension({
 
         const widget = node.widgets.find(w => w.name === "json_text");
         if (!widget) return;
-        
+
         widget.inputEl.style.display = "none";
 
         await ensureJSONEditor();
@@ -61,6 +61,6 @@ app.registerExtension({
             node.onRemoved = () => {
                 editor.destroy();
             };
-        }, 2000);
+        }, 1000);
     }
 });
