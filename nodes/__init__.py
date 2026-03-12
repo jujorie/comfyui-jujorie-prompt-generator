@@ -4,5 +4,6 @@ from .smart_clip_controller import SmartClipController
 from .prompt_url_builder import PromptURLBuilder
 from .smart_vram_clear import SmartVRAMClear
 from .conditional_pass import ConditionalPass, ConditionalPassImage
+from .json_to_prompt import JSONToPrompt
 
-__all__ = ["FetchPromptFromURL", "SmartPromptController", "SmartClipController", "PromptURLBuilder", "SmartVRAMClear", "ConditionalPass", "ConditionalPassImage"]
+__all__ = ["FetchPromptFromURL", "SmartPromptController", "SmartClipController", "PromptURLBuilder", "SmartVRAMClear", "ConditionalPass", "ConditionalPassImage", "JSONToPrompt"]
