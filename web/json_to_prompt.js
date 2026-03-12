@@ -27,6 +27,8 @@ app.registerExtension({
 
         const widget = node.widgets.find(w => w.name === "json_text");
         if (!widget) return;
+        
+        widget.inputEl.style.display = "none";
 
         await ensureJSONEditor();
 
@@ -34,7 +36,6 @@ app.registerExtension({
             const container = document.createElement("div");
             container.style.height = "100%";
 
-            widget.inputEl.style.display = "none";
             widget.inputEl.parentElement.appendChild(container);
 
             const editor = new JSONEditor(container, {
