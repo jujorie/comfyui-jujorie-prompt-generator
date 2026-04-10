@@ -1,11 +1,11 @@
-# ComfyUI Prompt Fetch Nodes
+# ComfyUI Jujorie Prompt Generator
 
-Suite of custom nodes for ComfyUI that fetch prompts from URLs and provide smart prompt control.
+Suite completa de nodos personalizados para ComfyUI que incluye generación dinámica de prompts, gestión de almacenamiento y control avanzado de prompts.
 
 **Este repo contiene:**
-- **`/nodes`:** Custom nodes de ComfyUI (Python)
-- **`/web`:** Extensiones JavaScript para ComfyUI UI enhancements
-- **`/server`:** Servidor Node.js que genera prompts dinámicamente
+- **`/nodes`:** Custom nodes de ComfyUI (Python) - 9+ nodos para gestión y control de prompts
+- **`/web`:** Extensiones JavaScript para ComfyUI - UI enhancements y paneles interactivos
+- **`/server`:** Servidor Node.js (opcional) que genera prompts dinámicamente con 30+ datasets
 
 ## Project Structure
 
@@ -68,19 +68,42 @@ Suite of custom nodes for ComfyUI that fetch prompts from URLs and provide smart
 
 ## Nodes
 
-### 1. Fetch Prompt From URL
-Simple node that fetches a prompt from an HTTP endpoint.
+### 1. Prompt Manager Node ⭐⭐⭐ (NEW!)
+Almacena y carga prompts de forma persistente. Los prompts se guardan como archivos JSON individuales.
 
 **Inputs:**
-- `url` (STRING): Endpoint URL
-- `refresh` (BOOLEAN): Trigger cache refresh
+- `prompt` (STRING multiline): Prompt a almacenar o editar
+- `select` (CHOICE): Selector de prompts previamente guardados
+- `should_save` (BOOLEAN): Guarda el prompt en BD al ejecutar
 
 **Outputs:**
-- `prompt` (STRING): Fetched prompt text
+- `prompt` (STRING): Prompt final (cargado de BD o manual)
 
-**Use case:** Direct integration with external prompt generators
+**Features:**
+- 💾 Almacenamiento persistente en `user/prompt_manager/`
+- 📋 Panel visual interactivo para ver/buscar/borrar prompts
+- 🔄 Refrescamiento automático de la lista al eliminar
+- 🎨 Botón "📋 Prompt Manager" integrado en el nodo
 
-### 2. Smart Prompt Controller ⭐
+**Uso:**
+1. Escribe un prompt y marca `should_save=true` → se guarda en BD
+2. Usa el dropdown `select` para cargar prompts previos
+3. Haz clic en "📋 Prompt Manager" para abrir el panel de gestión
+4. En el panel: busca, visualiza o borra prompts guardados
+
+### 2. Fetch Prompt From URL
+Simple node que obtiene un prompt desde una URL HTTP.
+
+**Inputs:**
+- `url` (STRING): URL del endpoint
+- `refresh` (BOOLEAN): Forzar refrescamiento de cache
+
+**Outputs:**
+- `prompt` (STRING): Prompt obtenido
+
+**Use case:** Integración directa con generadores externos de prompts
+
+### 3. Smart Prompt Controller ⭐
 Advanced node with dual-mode prompt control and automatic UI updates.
 
 **Inputs:**
@@ -101,7 +124,9 @@ Advanced node with dual-mode prompt control and automatic UI updates.
 **How it works:**
 1. Set `fetch=true` and provide a `url`
 2. Execute the workflow
-3.# 3. Smart CLIP Controller
+3. Each execution fetches a fresh prompt and updates the widget
+
+### 4. Smart CLIP Controller
 Advanced node for CLIP conditioning with dual-mode operation (manual/fetch).
 
 **Inputs:**
@@ -115,7 +140,23 @@ Advanced node for CLIP conditioning with dual-mode operation (manual/fetch).
 
 **Use case:** Direct CLIP encoding with automatic prompt fetching
 
-### 4. Prompt URL Builder
+### 5. JSON To Prompt (NEW!)
+Editor integrado de JSON dentro del nodo. Perfecto para editar estructuras de datos complejas.
+
+**Inputs:**
+- `json_data` (STRING): JSON a editar en el editor visual
+
+**Outputs:**
+- `json_str` (STRING): JSON formateado/validado
+
+**Features:**
+- ✓ Editor visual de JSON integrado
+- ✓ Validación de sintaxis en tiempo real
+- ✓ Formateo automático
+
+**Use case:** Editar configuraciones complejas o estructuras de datos sin salir de ComfyUI
+
+### 6. Prompt URL Builder
 Dynamic URL builder for the prompt generation server.
 
 **Inputs:**
@@ -130,7 +171,7 @@ Dynamic URL builder for the prompt generation server.
 
 **Use case:** Build dynamic URLs for the prompt server without manual URL construction
 
-### 5. Smart VRAM Clear 💾 (New!)
+### 7. Smart VRAM Clear 💾
 Memory management node that intelligently clears VRAM, GPU cache, and Python garbage.
 
 **Inputs:**
@@ -171,7 +212,7 @@ Model Load → Generate Image → Smart VRAM Clear → Next Model Load → Gener
 [SmartVRAM] mode=AGGRESSIVE freed=2.15GB new_reserved=3.08GB
 ```
 
-### 6. Conditional Pass 🔀 (New!)
+### 8. Conditional Pass 🔀
 Flow control node that enables/disables execution of downstream nodes.
 
 **Inputs:**
@@ -186,13 +227,10 @@ Flow control node that enables/disables execution of downstream nodes.
 - ✓ Universal pass-through (works with any data type)
 - ✓ Blocks downstream execution when disabled
 - ✓ Custom error messages for clarity
-- ✓ Useful for conditional workflow paths
 
 **Use case:** Generate fast image → [Conditional Pass] → Upscaler
-- `enabled=True`: Image passes to upscaler
-- `enabled=False`: Workflow stops, no upscaler execution
 
-### 6b. Conditional Pass (Image) 🖼️
+### 9. Conditional Pass (Image) 🖼️
 Specialized version for images with better debugging output.
 
 **Inputs:**
@@ -208,28 +246,128 @@ Specialized version for images with better debugging output.
 - ✓ Logs image resolution when passing
 - ✓ Better error messages for image-specific workflows
 
-**Example workflow:**
+---
+
+## API Endpoints
+
+El paquete proporciona tres endpoints HTTP para gestión de prompts guardados (disponibles cuando ComfyUI está ejecutándose):
+
+### GET `/prompt_manager/list`
+Obtiene la lista de todos los prompts guardados.
+
+**Response:**
+```json
+[
+  {
+    "id": "abc123def...",
+    "prompt": "cinematic portrait of a woman..."
+  },
+  ...
+]
 ```
-KSampler (fast model)
-    ↓
-Conditional Pass (Image)  ← Toggle this to enable/disable upscaling
-    ↓
-Upscaler Node
-    ↓
-Save Image
+
+### POST `/prompt_manager/get`
+Obtiene un prompt específico por ID.
+
+**Request Body:**
+```json
+{
+  "id": "abc123def..."
+}
 ```
+
+**Response:**
+```json
+{
+  "prompt": "cinematic portrait of a woman..."
+}
+```
+
+### POST `/prompt_manager/delete`
+Elimina un prompt guardado por ID.
+
+**Request Body:**
+```json
+{
+  "id": "abc123def..."
+}
+```
+
+**Response:**
+```json
+{
+  "status": "ok"
+}
+```
+
+---
+
+## JavaScript Extensions
+
+Las extensiones JavaScript en `/web/` proporcionan UI enhancements y comportamientos especiales:
+
+### 1. `prompt_manager_interactive.js`
+Extiende el nodo `PromptManagerNode` para cargar automáticamente prompts desde la base de datos.
+
+**Comportamiento:**
+- Cuando cambias la selección en el dropdown `select`, automáticamente carga el prompt de la BD
+- Rellena el campo de texto `prompt` con el contenido guardado
+- Soporta la opción "none" para no cargar nada
+
+### 2. `prompt_manager_panel.js` (NEW!)
+Proporciona el panel visual de gestión de prompts con función de búsqueda.
+
+**Features:**
+- 🔍 Buscador en tiempo real
+- 📋 Vista de todos los prompts guardados
+- 🗑️ Botón para eliminar prompts
+- 🔄 Refrescamiento automático de la lista del nodo al cerrar
+- 🎨 Botón "📋 Prompt Manager" integrado en el nodo
+
+**Uso:** Haz clic en el botón "📋 Prompt Manager" en el nodo para abrir el panel
+
+### 3. `smart_prompt_controller.js`
+Extiende el nodo `SmartPromptController` para actualizar el widget de prompt en tiempo real.
+
+**Comportamiento:**
+- Cuando se ejecuta en modo `fetch=true`, toma el prompt obtenido y lo muestra en el widget
+- Actualiza automáticamente la UI sin necesidad de recargar el nodo
+
+### 4. `conditional_pass_color.js`
+Extiende los nodos `ConditionalPass` y `ConditionalPassImage` para cambiar color según estado.
+
+**Comportamiento:**
+- Nodo **verde** cuando `enabled=true` ✓
+- Nodo **rojo** cuando `enabled=false` ✗
+
+### 5. `json_to_prompt.js`
+Proporciona editor visual integrado para el nodo `JSONToPrompt`.
+
+**Features:**
+- ✓ Editor de JSON con validación
+- ✓ Resaltado de sintaxis
+- ✓ Formateo automático
+
+### 6. `appearance.js`
+Customizaciones globales de la interfaz.
+
+---
 
 ## Features
 
-- ✓ Fetch prompt from HTTP endpoint
-- ✓ Works with text and JSON endpoints
-- ✓ Smart prompt controller with dual-mode operation
-- ✓ Real-time UI widget updates via JavaScript
-- ✓ Persistent values in workflow JSON
-- ✓ Default prompt server included (`/web`) with **dynamic filtering**
-- ✓ Simple integration with CLIP Text Encode
-- ✓ Timeout control (2000ms default)
-- ✓ Detailed error messages
+- ✅ Fetch prompt from HTTP endpoint
+- ✅ Works with text and JSON endpoints
+- ✅ Smart prompt controller with dual-mode operation
+- ✅ Real-time UI widget updates via JavaScript
+- ✅ Persistent values in workflow JSON
+- ✅ Persistent prompt storage with database
+- ✅ Interactive prompt manager panel with search/delete
+- ✅ Default prompt server included (`/server`) with **dynamic filtering**
+- ✅ Simple integration with CLIP Text Encode
+- ✅ Timeout control (2000ms default)
+- ✅ Detailed error messages
+- ✅ Memory management (VRAM clearing)
+- ✅ Conditional flow control
 
 ### Prompt Generator Server Features
 
@@ -250,19 +388,20 @@ Clone into custom_nodes:
 
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/YOUR_USERNAME/comfyui-prompt-fetch-node
+git clone https://github.com/jujorie/comfyui-jujorie-prompt-generator
 ```
 
 Install Python dependencies:
 
 ```bash
+cd comfyui-jujorie-prompt-generator
 pip install -r requirements.txt
 ```
 
 Start the prompt server (optional, for dynamic generation):
 
 ```bash
-cd web
+cd server
 npm install
 npm start
 ```
@@ -271,9 +410,25 @@ Restart ComfyUI completely so it loads the new nodes and web extensions.
 
 **⚠️ Important:** After installing, ComfyUI must be fully restarted to detect:
 - New node classes
-- JavaScript extension for UI updates
+- JavaScript extensions for UI updates
 
 ## Example Usage
+
+### Prompt Manager (Storage) ⭐
+
+**Guardar y gestionar prompts:**
+
+1. Add node **Prompt Manager Node**
+2. Escribe un prompt en el campo `prompt`
+3. Establece `should_save` = `true`
+4. Ejecuta el workflow → el prompt se guarda en BD
+5. Haz clic en "📋 Prompt Manager" para abrir el panel
+6. En el panel:
+   - 🔍 Usa la búsqueda para encontrar prompts
+   - 🗑️ Haz clic en "delete" para eliminar
+   - Cierra el panel → se refrescan automáticamente las opciones del dropdown
+
+**Result:** Los prompts se guardan persistentemente y puedes cargarlos fácilmente desde el dropdown.
 
 ### Smart Prompt Controller (Recommended)
 
@@ -308,6 +463,17 @@ Restart ComfyUI completely so it loads the new nodes and web extensions.
 4. Connect `prompt` output to CLIP Text Encode
 
 ## Configuration
+
+### Prompt Manager Node
+
+**prompt** (STRING multiline)  
+El prompt a almacenar o editar.
+
+**select** (CHOICE)  
+Selector de prompts guardados. Automáticamente cargará el prompt seleccionado.
+
+**should_save** (BOOLEAN)  
+Si es `true`, guarda el prompt actual en la BD al ejecutar.
 
 ### Smart Prompt Controller
 
