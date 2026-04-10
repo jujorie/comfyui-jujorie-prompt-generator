@@ -7,7 +7,7 @@ async function ensureJSONEditor() {
 
     if (jsonEditorLoaded) return;
 
-    const base = "/extensions/comfyui-prompt-fetch-node/lib/";
+    const base = "/extensions/comfyui-jujorie-prompt-generator/lib/";
 
     const css = document.createElement("link");
     css.rel = "stylesheet";

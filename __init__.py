@@ -1,4 +1,5 @@
-from .nodes import FetchPromptFromURL, SmartPromptController, SmartClipController, PromptURLBuilder, SmartVRAMClear, ConditionalPass, ConditionalPassImage, JSONToPrompt
+from .nodes import FetchPromptFromURL, SmartPromptController, SmartClipController, PromptURLBuilder, SmartVRAMClear, ConditionalPass, ConditionalPassImage, JSONToPrompt, PromptManagerNode
+
 import os
 
 # Node registration
@@ -11,6 +12,7 @@ NODE_CLASS_MAPPINGS = {
     "ConditionalPass": ConditionalPass,
     "ConditionalPassImage": ConditionalPassImage,
     "JSONToPrompt": JSONToPrompt,
+    "PromptManagerNode": PromptManagerNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -21,7 +23,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "SmartVRAMClear": "Smart VRAM Clear (Memory Safe)",
     "ConditionalPass": "Conditional Pass (Any Type)",
     "ConditionalPassImage": "Conditional Pass (Image)",
-    "JSONToPrompt": "JSON → Prompt"
+    "JSONToPrompt": "JSON → Prompt",
+    "PromptManagerNode": "Prompt Manager",
 }
 
 # Web extensions - ComfyUI will load JavaScript files from this directory

@@ -1,5 +1,5 @@
 [project]
-name = "comfyui-prompt-fetch-node"
+name = "comfyui-jujorie-prompt-generator"
 version = "1.0.0"
 description = "ComfyUI custom node that fetches prompts from a URL"
 authors = [
@@ -11,5 +11,5 @@ dependencies = [
 
 [tool.comfy]
 PublisherId = "jujorie"
-DisplayName = "ComfyUI Prompt Fetch Node"
+DisplayName = "ComfyUI Jujorie Prompt Generator"
 Icon = ""
