@@ -17,7 +17,7 @@ def path(pid):
     return os.path.join(PROMPT_DIR, pid + ".json")
 
 
-def list_prompts():
+def list_prompts(page=None, page_size=None, limit=None):
 
     result = []
 
@@ -33,7 +33,17 @@ def list_prompts():
 
         result.append(data)
 
-    return result
+    result.sort(key=lambda x: x.get("created", 0), reverse=True)
+
+    total = len(result)
+
+    if limit is not None:
+        result = result[:limit]
+    elif page is not None and page_size is not None:
+        start = page * page_size
+        result = result[start:start + page_size]
+
+    return result, total
 
 
 def save_prompt(prompt):

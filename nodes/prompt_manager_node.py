@@ -14,7 +14,9 @@ class PromptManagerNode:
 
         prompts = ["none"]
 
-        for p in list_prompts():
+        recent, _ = list_prompts(limit=20)
+
+        for p in recent:
             preview = p["prompt"][:40].replace("\n", " ")
             prompts.append(f'{p["id"]} | {preview}')
 

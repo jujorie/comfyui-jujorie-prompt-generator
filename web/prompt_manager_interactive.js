@@ -1,5 +1,7 @@
 import { app } from "../../scripts/app.js";
 
+const PAGE_SIZE = 4;
+
 app.registerExtension({
 
     name: "prompt.manager.interactive",
@@ -45,11 +47,11 @@ app.registerExtension({
             if (originalCallback) originalCallback.call(selectWidget, value);
         };
 
-        // Rebuild select options from the API
+        // Rebuild select combo with the 20 most recent prompts from the server
         async function refreshSelectOptions() {
             try {
-                const response = await fetch("/prompt_manager/list");
-                const prompts = await response.json();
+                const response = await fetch("/prompt_manager/list?page=0&page_size=20");
+                const { prompts } = await response.json();
 
                 const options = ["none"];
 
@@ -69,6 +71,23 @@ app.registerExtension({
             } catch (error) {
                 console.error("Error refreshing prompts:", error);
             }
+        }
+
+        // Use a prompt: inject into the combo (if missing) and load its text
+        async function usePrompt(p) {
+            const option = `${p.id} | ${p.prompt.substring(0, 40).replace(/\n/g, " ")}`;
+
+            if (!selectWidget.options.values.includes(option)) {
+                selectWidget.options.values = [
+                    ...selectWidget.options.values.filter(v => v !== "none"),
+                    option,
+                    "none"
+                ].sort((a, b) => a === "none" ? 1 : b === "none" ? -1 : 0);
+            }
+
+            selectWidget.value = option;
+            promptWidget.value = p.prompt;
+            node.setDirtyCanvas(true, true);
         }
 
         // Open the manage-prompts modal
@@ -93,7 +112,6 @@ app.registerExtension({
                 padding: 20px;
                 width: 560px;
                 max-width: 90vw;
-                max-height: 80vh;
                 display: flex;
                 flex-direction: column;
                 gap: 14px;
@@ -126,7 +144,6 @@ app.registerExtension({
                 cursor: pointer;
                 padding: 2px 6px;
                 border-radius: 4px;
-                transition: color 0.15s;
             `;
             closeBtn.onmouseover = () => closeBtn.style.color = "#fff";
             closeBtn.onmouseout  = () => closeBtn.style.color = "#888";
@@ -135,24 +152,54 @@ app.registerExtension({
             header.appendChild(title);
             header.appendChild(closeBtn);
 
-            // List container
+            // List area
             const list = document.createElement("div");
             list.style.cssText = `
-                overflow-y: auto;
-                flex: 1;
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
-                min-height: 60px;
+                min-height: 80px;
             `;
 
-            const loading = document.createElement("div");
-            loading.textContent = "Loading…";
-            loading.style.cssText = "color: #777; text-align: center; padding: 24px;";
-            list.appendChild(loading);
+            // Pagination bar
+            const pager = document.createElement("div");
+            pager.style.cssText = `
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 12px;
+                border-top: 1px solid #333;
+                padding-top: 12px;
+            `;
+
+            const btnStyle = `
+                background: #2a2a3e;
+                border: 1px solid #444;
+                border-radius: 5px;
+                color: #ccc;
+                cursor: pointer;
+                padding: 4px 14px;
+                font-size: 14px;
+            `;
+
+            const prevBtn = document.createElement("button");
+            prevBtn.textContent = "←";
+            prevBtn.style.cssText = btnStyle;
+
+            const pageLabel = document.createElement("span");
+            pageLabel.style.cssText = "font-size: 12px; color: #888; min-width: 70px; text-align: center;";
+
+            const nextBtn = document.createElement("button");
+            nextBtn.textContent = "→";
+            nextBtn.style.cssText = btnStyle;
+
+            pager.appendChild(prevBtn);
+            pager.appendChild(pageLabel);
+            pager.appendChild(nextBtn);
 
             dialog.appendChild(header);
             dialog.appendChild(list);
+            dialog.appendChild(pager);
             overlay.appendChild(dialog);
             document.body.appendChild(overlay);
 
@@ -165,6 +212,62 @@ app.registerExtension({
                 if (e.target === overlay) close();
             });
 
+            // Pagination state
+            let currentPage = 0;
+            let totalItems  = 0;
+
+            function totalPages() {
+                return Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+            }
+
+            function loadPage(page) {
+                currentPage = page;
+                list.innerHTML = "";
+
+                const loading = document.createElement("div");
+                loading.textContent = "Loading…";
+                loading.style.cssText = "color: #777; text-align: center; padding: 24px;";
+                list.appendChild(loading);
+
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+
+                fetch(`/prompt_manager/list?page=${page}&page_size=${PAGE_SIZE}`)
+                    .then(r => r.json())
+                    .then(({ prompts, total }) => {
+                        totalItems = total;
+                        list.innerHTML = "";
+
+                        if (prompts.length === 0) {
+                            const empty = document.createElement("div");
+                            empty.textContent = "No prompts saved.";
+                            empty.style.cssText = "color: #666; text-align: center; padding: 24px;";
+                            list.appendChild(empty);
+                        } else {
+                            for (const p of prompts) {
+                                list.appendChild(renderItem(p));
+                            }
+                        }
+
+                        const tp = totalPages();
+                        pageLabel.textContent = `${currentPage + 1} / ${tp}`;
+                        prevBtn.disabled = currentPage === 0;
+                        nextBtn.disabled = currentPage >= tp - 1;
+                        prevBtn.style.opacity = prevBtn.disabled ? "0.3" : "1";
+                        nextBtn.style.opacity = nextBtn.disabled ? "0.3" : "1";
+                    })
+                    .catch(() => {
+                        list.innerHTML = "";
+                        const err = document.createElement("div");
+                        err.textContent = "Failed to load prompts.";
+                        err.style.cssText = "color: #e74c3c; text-align: center; padding: 24px;";
+                        list.appendChild(err);
+                    });
+            }
+
+            prevBtn.onclick = () => loadPage(currentPage - 1);
+            nextBtn.onclick = () => loadPage(currentPage + 1);
+
             // Render a single prompt row
             function renderItem(p) {
                 const item = document.createElement("div");
@@ -176,7 +279,7 @@ app.registerExtension({
                     display: flex;
                     justify-content: space-between;
                     align-items: flex-start;
-                    gap: 10px;
+                    gap: 8px;
                 `;
 
                 const textDiv = document.createElement("div");
@@ -199,8 +302,30 @@ app.registerExtension({
                 textDiv.appendChild(preview);
                 textDiv.appendChild(meta);
 
+                // Action buttons
+                const actions = document.createElement("div");
+                actions.style.cssText = "display: flex; flex-direction: column; gap: 5px; flex-shrink: 0;";
+
+                const useBtn = document.createElement("button");
+                useBtn.textContent = "Usar";
+                useBtn.style.cssText = `
+                    background: #1a5c38;
+                    border: none;
+                    border-radius: 4px;
+                    color: #fff;
+                    cursor: pointer;
+                    padding: 5px 12px;
+                    font-size: 12px;
+                `;
+                useBtn.onmouseover = () => useBtn.style.background = "#27ae60";
+                useBtn.onmouseout  = () => useBtn.style.background = "#1a5c38";
+                useBtn.onclick = async () => {
+                    await usePrompt(p);
+                    close();
+                };
+
                 const deleteBtn = document.createElement("button");
-                deleteBtn.textContent = "Delete";
+                deleteBtn.textContent = "Borrar";
                 deleteBtn.style.cssText = `
                     background: #8b2020;
                     border: none;
@@ -209,12 +334,9 @@ app.registerExtension({
                     cursor: pointer;
                     padding: 5px 12px;
                     font-size: 12px;
-                    flex-shrink: 0;
-                    transition: background 0.15s;
                 `;
                 deleteBtn.onmouseover = () => deleteBtn.style.background = "#c0392b";
                 deleteBtn.onmouseout  = () => deleteBtn.style.background = "#8b2020";
-
                 deleteBtn.onclick = async () => {
                     deleteBtn.disabled = true;
                     deleteBtn.textContent = "…";
@@ -226,52 +348,32 @@ app.registerExtension({
                             body: JSON.stringify({ id: p.id })
                         });
 
-                        item.remove();
+                        totalItems--;
 
-                        if (list.children.length === 0) {
-                            const empty = document.createElement("div");
-                            empty.textContent = "No prompts saved.";
-                            empty.style.cssText = "color: #666; text-align: center; padding: 24px;";
-                            list.appendChild(empty);
-                        }
+                        // If this was the last item on the page, go to previous page
+                        const remainingOnPage = list.children.length - 1;
+                        const targetPage = remainingOnPage === 0 && currentPage > 0
+                            ? currentPage - 1
+                            : currentPage;
+
+                        loadPage(targetPage);
 
                     } catch (err) {
                         console.error("Error deleting prompt:", err);
                         deleteBtn.disabled = false;
-                        deleteBtn.textContent = "Delete";
+                        deleteBtn.textContent = "Borrar";
                     }
                 };
 
+                actions.appendChild(useBtn);
+                actions.appendChild(deleteBtn);
                 item.appendChild(textDiv);
-                item.appendChild(deleteBtn);
+                item.appendChild(actions);
                 return item;
             }
 
-            // Fetch and render prompts
-            fetch("/prompt_manager/list")
-                .then(r => r.json())
-                .then(prompts => {
-                    list.innerHTML = "";
-
-                    if (prompts.length === 0) {
-                        const empty = document.createElement("div");
-                        empty.textContent = "No prompts saved.";
-                        empty.style.cssText = "color: #666; text-align: center; padding: 24px;";
-                        list.appendChild(empty);
-                        return;
-                    }
-
-                    for (const p of prompts) {
-                        list.appendChild(renderItem(p));
-                    }
-                })
-                .catch(() => {
-                    list.innerHTML = "";
-                    const err = document.createElement("div");
-                    err.textContent = "Failed to load prompts.";
-                    err.style.cssText = "color: #e74c3c; text-align: center; padding: 24px;";
-                    list.appendChild(err);
-                });
+            // Initial load
+            loadPage(0);
         }
 
         // Add button to the node
