@@ -1,7 +1,7 @@
 from aiohttp import web
 from server import PromptServer
 
-from .prompt_db import list_prompts, delete_prompt, load_prompt
+from .prompt_db import list_prompts, delete_prompt, load_prompt, update_prompt_name
 
 
 @PromptServer.instance.routes.get("/prompt_manager/list")
@@ -21,6 +21,16 @@ async def delete_api(request):
     data = await request.json()
 
     delete_prompt(data["id"])
+
+    return web.json_response({"status": "ok"})
+
+
+@PromptServer.instance.routes.post("/prompt_manager/update")
+async def update_api(request):
+
+    data = await request.json()
+
+    update_prompt_name(data["id"], data["name"])
 
     return web.json_response({"status": "ok"})
 

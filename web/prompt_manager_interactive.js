@@ -56,8 +56,8 @@ app.registerExtension({
                 const options = ["none"];
 
                 for (const p of prompts) {
-                    const preview = p.prompt.substring(0, 40).replace(/\n/g, " ");
-                    options.push(`${p.id} | ${preview}`);
+                    const name = p.name || p.prompt.substring(0, 40).replace(/\n/g, " ");
+                    options.push(`${p.id} | ${name}`);
                 }
 
                 selectWidget.options.values = options;
@@ -75,7 +75,8 @@ app.registerExtension({
 
         // Use a prompt: inject into the combo (if missing) and load its text
         async function usePrompt(p) {
-            const option = `${p.id} | ${p.prompt.substring(0, 40).replace(/\n/g, " ")}`;
+            const name   = p.name || p.prompt.substring(0, 40).replace(/\n/g, " ");
+            const option = `${p.id} | ${name}`;
 
             if (!selectWidget.options.values.includes(option)) {
                 selectWidget.options.values = [
@@ -285,12 +286,154 @@ app.registerExtension({
                 const textDiv = document.createElement("div");
                 textDiv.style.cssText = "flex: 1; overflow: hidden;";
 
+                // ── Editable name row ──────────────────────────────────────
+                const nameRow = document.createElement("div");
+                nameRow.style.cssText = "display: flex; align-items: center; gap: 6px; margin-bottom: 4px;";
+
+                const nameLabel = document.createElement("span");
+                nameLabel.textContent = p.name || p.prompt.substring(0, 40).replace(/\n/g, " ");
+                nameLabel.style.cssText = `
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #e0e0e0;
+                    flex: 1;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                `;
+
+                const editBtn = document.createElement("button");
+                editBtn.textContent = "✏️";
+                editBtn.title = "Editar nombre";
+                editBtn.style.cssText = `
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 12px;
+                    padding: 0 2px;
+                    opacity: 0.5;
+                    flex-shrink: 0;
+                `;
+                editBtn.onmouseover = () => editBtn.style.opacity = "1";
+                editBtn.onmouseout  = () => editBtn.style.opacity = "0.5";
+
+                nameRow.appendChild(nameLabel);
+                nameRow.appendChild(editBtn);
+
+                // Inline edit form (hidden by default)
+                const editRow = document.createElement("div");
+                editRow.style.cssText = "display: none; align-items: center; gap: 6px; margin-bottom: 4px;";
+
+                const nameInput = document.createElement("input");
+                nameInput.type = "text";
+                nameInput.maxLength = 80;
+                nameInput.style.cssText = `
+                    flex: 1;
+                    background: #0d1117;
+                    border: 1px solid #555;
+                    border-radius: 4px;
+                    color: #e0e0e0;
+                    font-size: 13px;
+                    padding: 3px 7px;
+                    outline: none;
+                `;
+
+                const saveNameBtn = document.createElement("button");
+                saveNameBtn.textContent = "✓";
+                saveNameBtn.title = "Guardar";
+                saveNameBtn.style.cssText = `
+                    background: #1a5c38;
+                    border: none;
+                    border-radius: 4px;
+                    color: #fff;
+                    cursor: pointer;
+                    font-size: 13px;
+                    padding: 3px 8px;
+                    flex-shrink: 0;
+                `;
+
+                const cancelNameBtn = document.createElement("button");
+                cancelNameBtn.textContent = "✗";
+                cancelNameBtn.title = "Cancelar";
+                cancelNameBtn.style.cssText = `
+                    background: #444;
+                    border: none;
+                    border-radius: 4px;
+                    color: #ccc;
+                    cursor: pointer;
+                    font-size: 13px;
+                    padding: 3px 8px;
+                    flex-shrink: 0;
+                `;
+
+                editRow.appendChild(nameInput);
+                editRow.appendChild(saveNameBtn);
+                editRow.appendChild(cancelNameBtn);
+
+                // Shared refs so edit functions can reach action buttons
+                const actionRefs = { useBtn: null, deleteBtn: null };
+
+                function setActionsDisabled(disabled) {
+                    for (const btn of Object.values(actionRefs)) {
+                        if (!btn) continue;
+                        btn.disabled      = disabled;
+                        btn.style.opacity = disabled ? "0.3" : "1";
+                        btn.style.cursor  = disabled ? "default" : "pointer";
+                    }
+                }
+
+                function startEdit() {
+                    nameInput.value = nameLabel.textContent;
+                    nameRow.style.display = "none";
+                    editRow.style.display = "flex";
+                    setActionsDisabled(true);
+                    nameInput.focus();
+                    nameInput.select();
+                }
+
+                async function commitEdit() {
+                    const newName = nameInput.value.trim();
+                    if (!newName || newName === nameLabel.textContent) {
+                        cancelEdit();
+                        return;
+                    }
+                    saveNameBtn.disabled = true;
+                    try {
+                        await fetch("/prompt_manager/update", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ id: p.id, name: newName })
+                        });
+                        p.name = newName;
+                        nameLabel.textContent = newName;
+                    } catch (err) {
+                        console.error("Error updating name:", err);
+                    }
+                    saveNameBtn.disabled = false;
+                    cancelEdit();
+                }
+
+                function cancelEdit() {
+                    editRow.style.display = "none";
+                    nameRow.style.display = "flex";
+                    setActionsDisabled(false);
+                }
+
+                editBtn.onclick     = startEdit;
+                saveNameBtn.onclick = commitEdit;
+                cancelNameBtn.onclick = cancelEdit;
+                nameInput.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter")  commitEdit();
+                    if (e.key === "Escape") cancelEdit();
+                });
+                // ──────────────────────────────────────────────────────────
+
                 const preview = document.createElement("div");
                 preview.textContent =
                     p.prompt.substring(0, 120) + (p.prompt.length > 120 ? "…" : "");
                 preview.style.cssText = `
-                    font-size: 13px;
-                    color: #ccc;
+                    font-size: 12px;
+                    color: #888;
                     word-break: break-word;
                     line-height: 1.4;
                 `;
@@ -299,6 +442,8 @@ app.registerExtension({
                 meta.textContent = `id: ${p.id.substring(0, 12)}…`;
                 meta.style.cssText = "font-size: 11px; color: #555; margin-top: 4px;";
 
+                textDiv.appendChild(nameRow);
+                textDiv.appendChild(editRow);
                 textDiv.appendChild(preview);
                 textDiv.appendChild(meta);
 
@@ -364,6 +509,9 @@ app.registerExtension({
                         deleteBtn.textContent = "Borrar";
                     }
                 };
+
+                actionRefs.useBtn    = useBtn;
+                actionRefs.deleteBtn = deleteBtn;
 
                 actions.appendChild(useBtn);
                 actions.appendChild(deleteBtn);

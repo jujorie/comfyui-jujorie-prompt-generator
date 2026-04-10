@@ -17,8 +17,8 @@ class PromptManagerNode:
         recent, _ = list_prompts(limit=20)
 
         for p in recent:
-            preview = p["prompt"][:40].replace("\n", " ")
-            prompts.append(f'{p["id"]} | {preview}')
+            name = p.get("name") or p["prompt"][:40].replace("\n", " ")
+            prompts.append(f'{p["id"]} | {name}')
 
         return {
             "required": {
